@@ -1,0 +1,207 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"  >
+    <title>RemindME</title>
+    <link rel="icon" href="logo.png">
+    <link href="font-awesome-4.7.0/css/font-awesome.css" media="all" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/materialize.css">
+    <link rel="stylesheet" href="CSS/content.css">
+    <script src="JS/jquery.js"></script>
+    <script src="JS/moment.js"></script>
+    <script src="JS/timezone.js"></script>
+    <script src="JS/materialize.js"></script>
+    <script src="JS/content.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        body{
+            background: url(bgimg2.jpeg) fixed center no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+<!-- CREATE LIST-->
+
+<a  class="waves-effect waves-light btn modalDemo" style="cursor: pointer"><i class="fa fa-plus fa-3x"></i>&nbsp;&nbsp;Create List</a>
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <h4 style='text-align: center; font-size: 20px; color: #262626;'>Create New List</h4></b>
+        <div class="row">
+        <div  class="input-field col s11">
+            <input id="list_name" type="text" class="validate addList">
+            <label for="list_name">List Name</label>
+        </div>
+            <div class="input-field col">
+        <a class="btn-floating btn waves-effect waves-light red addListBtn" style="float: right"><i class="fa fa-plus"></i></a>
+            </div>
+            </div>
+</div>
+</div>
+
+
+
+<!--------------------- NAVIGATION  ON SMALL SCREEN AND SIDE BAR IN GENERAL--------------------------------------------------------------->
+
+
+<ul id="slide-out" class="side-nav">
+    <li><div class="user-view">
+        <div class="background">
+            <img src="bgsidenav.jpg">
+        </div>
+        <a href="#!user"><i class="fa fa-user-circle-o fa-4x"></i></a>
+        <a href="#!name"><span class="white-text name usernameSideNav"></span></a>
+        <a href="#!email"><span class="white-text email emailSideNav"></span></a>
+    </div></li>
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li>
+                <a class="collapsible-header">&nbsp;<i class="fa fa-caret-down fa-5x" aria-hidden="true"></i>
+                &nbsp;&nbsp;Categories</a>
+                <div class="collapsible-body" style="display: none;">
+                    <ul class="allLists">
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+
+</ul>
+
+<nav  class="hide-on-large-only" style="background-color:#668964">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="slide-out" class="left button3-collapse hide-on-large-only"><i class="fa fa-bars fa-3x" aria-hidden="true"></i></a>
+        <a href="#" class="center brand-logo"><img class="responsive-img homeImg" style="cursor:pointer;"src="logo.png" height = "60px" width="60px"></a>
+         <a href="/logout" class="right hide-on-large-only"><i class="fa fa-sign-out fa-3x" aria-hidden="true"></i></a>
+    </div>
+</nav>
+
+
+
+<!-------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+
+
+<!-- NAV BAR FOR BIG SCREEN------------------------------------------------------------------------------------------------->
+
+
+<nav class="hide-on-med-and-down" style="background-color:#668964; height : 45px ">
+    <div class="nav-wrapper" style="line-height: 45px;">
+    <a href="#" data-activates="slide-out" class="left button3-collapse hide-on-med-and-down"><i class="fa fa-bars fa-2x" style="line-height: 45px; height: 45px"aria-hidden="true"></i></a>
+        <img class="center brand-logo responsive-img homeImg" style="cursor: pointer"src="logo.png" height="45" width="45">
+        <ul class="right hide-on-med-and-down">
+            <li><a href="/logout"><i class="fa fa-2x fa-sign-out" style="line-height: 45px; height: 45px"></i> </a></li>
+        </ul>
+    </div>
+</nav>
+
+
+
+
+<!--------------------------------------------------------------------------------------------------------------------------->
+
+
+<!--------------------------------------------------------------------------------------------------------------------------->
+
+<!-- LIST HEADING AND CONTENT ADDER FOR INDIVUAL LIST-->
+<div class="listHeadingContent">
+<nav style="background-color: #262626; height : 45px ">
+    <div class="nav-wrapper" style="line-height: 45px; text-align: center; font-size: 30px">
+    </div>
+</nav>
+    <br>
+    <div class="contentAdder row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col l5 s12 m12 taskAdd">
+                    <i class="fa fa-tasks prefix"></i>
+                    <input id="taskAdder" type="text" class="validate">
+                    <label for="taskAdder">Task</label>
+                </div>
+                <div class="input-field col l3 s12 m12 taskAdd">
+                    <i class="fa fa-calendar prefix"></i>
+                    <input id="DateAdder" type="text" class="validate">
+                    <label for="DateAdder">Date(mm/dd/yy)</label>
+                </div>
+                <div class="input-field col l3 s12 m12 taskAdd">
+                    <i class="fa fa-clock-o prefix"></i>
+                    <input id="TimeAdder" type="text" class="validate">
+                    <label for="TimeAdder">Time(hh:mm)</label>
+                </div>
+                <div class="input-field col l1 s1 m1 taskAdd">
+            <a class="btn-floating btn waves-effect waves-light red addTaskBtn"><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <ul class="collapsible popout contentTask" data-collapsible="accordion" >
+            <li>
+
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- CONTENT TO BE DISPLAYED ON HOME PAGE LIKE STATS OF USERLOGGED IN-->
+
+<!--------------------------------------------------------------------------LOHITAKSH------------------------------------------------->
+<style>
+    .google-visualization-table-td {
+        text-align: center !important;
+    }
+</style>
+<div class="contentHomePage">
+    <div class="hide-on-med-and-down row">
+        <div class="col l5"><p style="margin: 30px; font-size: 25px;">YOU VISITED</p><p id="statistic_num1" style="margin: 30px"></p><p style="margin: 30px; font-size: 25px;">TIMES</p></div>
+        <div class="col l5 pull-l2" id="chart_div1" style="margin-top: 40px"></div>
+        <div class="col l5 push-l7" id="table_div1" style="width: 500px; height: 250px;margin-top: -250px"></div>
+    </div>
+    <div class="hide-on-large-only row">
+        <div class="col s5"><p style="margin: 10px; font-size: 20px;">YOU VISITED</p><p id="statistic_num2" style="margin: 10px"></p><p style="margin: 10px; font-size: 20px;">TIMES</p></div>
+    </div>
+    <div class="hide-on-large-only row">
+        <div class="col s5" id="chart_div2" style="margin-top: 10px;margin-left: -30px;"></div>
+    </div>
+    <div class="hide-on-large-only row">
+        <div class="col s5 " id="table_div2" style="width:300px;margin-top: -30px;"></div>
+    </div>
+    <div class="row">
+        <div class="col l5 push-l3">
+            <div class="card-panel teal">
+                <span class="white-text">
+                    MOST URGENT TASKS
+                </span>
+                <ul class="collapsible" data-collapsible="accordion">
+                    <li>
+                        <div class="collapsible-header">First</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Second</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Third</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Fourth</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header">Fifth</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--------------------------------------------------------------------------LOHITAKSH------------------------------------------------->
+</body>
+</html>

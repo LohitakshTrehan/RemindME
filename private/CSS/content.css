@@ -1,0 +1,37 @@
+html {
+    font-family: GillSans, Calibri, Trebuchet, sans-serif;
+}
+header, main, footer {
+    padding-left: 250px;
+}
+.modalDemo{
+    float: right;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+
+}
+
+@media only screen and (max-width : 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+/* label focus color */
+.taskAdd input[type=text] {
+    color: #fff !important;
+}
+
+.taskAdd label{
+    color: #fff !important;
+}
+.taskAdd input[type=text]:focus + label, .materialize-textarea:focus:not([readonly]) + label {
+    color: #fff !important;
+}
+/* label underline focus color */
+.taskAdd input[type=text]:focus {
+    border-bottom: 1px solid #fff !important;
+    box-shadow: 0 1px 0 0 #fff !important;
+}
+

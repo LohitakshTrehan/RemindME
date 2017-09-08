@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"  >
+    <title>RemindME</title>
+    <script src="https://use.fontawesome.com/2507c19ea3.js"></script>
+    <link rel="stylesheet" href="CSS/semantic.css">
+    <link rel="icon" href="1.png">
+    <script src="JS/jquery.js"></script>
+    <script src="JS/semantic.js"></script>
+    <link rel="stylesheet" href="CSS/login_and_signup.css">
+    <script src="JS/login_and_signup.js"></script>
+    <style>
+        body{
+            background: url(background.jpg) fixed center no-repeat;
+            background-size: cover ;
+        }
+    </style>
+</head>
+<body style="background-color: #ffffff">
+<div id="menu">
+    <div class="ui grid stackable" style="background-color: rgb(0,0,0);height: 8%;">
+        <div class="row center aligned sixteen wide " style="margin-top: 1%">
+            <div class="column two wide" style="margin-top: -6% ;margin-bottom: -9%">
+                <img src="1.png" height="70" width="70">
+            </div>
+            <div class="column seven wide" style="vertical-align: middle">
+                <span id="for_primary" class="ui text container segment header button raised inverted "><h1>LOGIN</h1></span>
+            </div>
+            <div class="column seven wide" style="vertical-align: middle;">
+                <span id="for_secondary" class="ui text container segment header button raised inverted"><h1>ABOUT RemindME</h1></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="my_primary" class="ui grid vertically divided" style="display: block">
+    <div class="one colummn row">
+        <div class="column">
+            <p><br></p>
+        </div>
+    </div>
+    <div class="two column row">
+        <div class="column">
+            <p><br> <br></p>
+        </div>
+        <div class=" four wide computer twelve wide mobile six wide tablet ui raised card column centered" style="z-index: 100;">
+            <div id="first" style="display: block">
+
+                <form id="signinform" class="ui form" method="post" action="/login" style="padding: 8%">
+
+                    <h2 class="ui dividing header">Sign In</h2>
+                    <div class="field" style="padding: 1%">
+                        <label><h3>UserName</h3></label>
+                        <input type="text" name="username" placeholder="Your User Id">
+                    </div>
+
+                    <div class="field" style="padding: 1%">
+                        <label><h3>Password </h3></label>
+                        <input type="password" name="password" placeholder="Password">
+                    </div>
+
+                    <div class="stackable" style="display: inline-block; padding: 1%">
+                        <input type="submit" class="ui medium left floated primary basic button" value="Submit">
+                        <button type="reset" class="ui medium right floated secondary basic button">Reset</button>
+                    </div>
+
+                    <div class="field" style="padding-top: 7%">
+                        <a href="#"> Forgot password?</a>
+                    </div>
+
+                    <div class="field" style="padding-top: 1%">
+                        <a id="signup" href="#"> New User? &nbsp;Signup</a>
+                    </div>
+
+                </form>
+            </div>
+
+            <div id="second" style="display: none">
+                <form id="signupform" class="ui form" method="post" action="/register" style="padding: 8%">
+
+                    <h3 class="ui dividing header">Sign Up</h3>
+                    <div class="field" style="padding: 1%">
+                        <label>Name</label>
+                        <div class="two fields">
+                            <div class="field">
+                                <input type="text" name="firstname" placeholder="First Name">
+                            </div>
+                            <div class="field">
+                                <input type="text" name="lastname" placeholder="Last Name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field" style="padding: 1%">
+                        <label>Username</label>
+                        <input type="text" name="username" placeholder="Enter Unique username">
+                    </div>
+                    <div class="field">
+                        <label>Email Address</label>
+                        <input type="text" name="email" placeholder="Email-Address">
+                    </div>
+                    <div class="field" style="padding: 1%">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="Password">
+                    </div>
+                    <div class="field" style="padding: 1%">
+                        <label>Confirm Password</label>
+                        <input type="password" name="confirmpassword" placeholder="Re-Enter above Password">
+                    </div>
+                    <div class="field" style="padding: 1%">
+                        <label>Sex</label>
+                         <select name="Sex">
+                              <option value="male">Male</option>
+                              <option value="female">Female</option>
+                        </select> 
+                    </div>
+                    <div class="field" style="padding: 1%">
+                        <label>dob</label>
+                        <input type="date" name="dob" placeholder="yyyy-mm-dd">
+                    </div>
+                    <div class="stackable" style="display: inline-block; padding: 1%">
+                        <input type="submit" class="ui medium left floated primary basic button" value="Submit">
+                        <button type="reset" class="ui medium right floated secondary basic button">Reset</button>
+                    </div>
+                    <div class="field" style="padding-top: 3%">
+                        <a id="signin" href="#">Existing User? Sign In</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="my_secondary" class= "ui vertically divided grid" style="display: none">
+    <div class="two column row">
+        <div class="column">
+            <p><br> <br> <br> <br></p>
+        </div>
+
+        <div class=" four wide computer twelve wide mobile six wide tablet ui raised card column centered" style="z-index: 100;">
+            <h1 class="ui dividing header" style="padding: 3%">About RemindME</h1>
+            <div class="field" style="padding: 3%">
+                <p class="content">
+                    RemindME is a service which dedicated for you, its sole purpose is to remind you.
+                    And discover new and innovative ways to do so. So that you may not miss anything
+                    you scheduled.<br>
+                    We are focused more and more on delivering quality service to all our users.
+                </p>
+                <br>
+                <p class="content" style="padding: 3%">
+                    We are NODES of NITKKR, yes you hear it right, we are some Under Graduates,
+                    of a college, with a passion in developing softwares. We <i class="fa fa-heart" aria-hidden="true"></i> Development.
+                    Hope you enjoy one of our creation.<br>
+                    You can also contribute to the project on Github, or report any bug there.
+                </p>
+                <p class="content" style="padding: 3%">
+                    Hope to see you Happy :)  The clock is ticking RUN!!!
+                </p>
+                <span id="github" class="ui button" style="background-color: white"><i class="fa fa-github fa-4x" aria-hidden="true"></i></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
