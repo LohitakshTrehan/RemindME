@@ -145,3 +145,32 @@ app.get('/retrieveData',function(req,res){
 		console.log(err);
 	})
 })
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
+app.get('/retrievePieChart',function (req,res) {
+    db.findOne({
+        where: userdbId = req.user.id
+    }).then(function(data){
+        if(data != null) {
+            console.log(data);
+            res.send(data);
+        }
+    }).catch(function(err){
+        console.log(err);
+    })
+})
+
+app.post('/updatePieChart',function (req,res) {
+    db.findOne({
+        where: userdbId = req.user.id
+    }).then(function(data){
+        data.update({
+            TaskDoneCounter: req.body.done_tasks,
+            TaskNotDoneCounter: req.body.pending_tasks
+        }).then(function(){
+            res.send({success: true});
+        })
+    })
+})
+
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////

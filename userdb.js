@@ -9,7 +9,7 @@ const db = new Sequelize({
 	dialect:process.env.DB_DIALECT
 });
 
-
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 const users = db.define('userdb',{
 	id:{
 		type:Sequelize.DataTypes.INTEGER,
@@ -22,17 +22,19 @@ const users = db.define('userdb',{
 	email:{type:Sequelize.DataTypes.STRING , unique: true , allowNull: false},
 	passwordhash:{type:Sequelize.DataTypes.STRING , allowNull: false},
 	sex:Sequelize.DataTypes.STRING,
-	dob:{type:Sequelize.DataTypes.DATEONLY ,allowNull: false}, 
+	dob:{type:Sequelize.DataTypes.DATEONLY ,allowNull: false},
+    TaskDoneCounter:{type:Sequelize.DataTypes.INTEGER, defaultValue: 0},
+    TaskNotDoneCounter:{type:Sequelize.DataTypes.INTEGER, defaultValue: 0}
 },{
 	timestamps: false
 });
-
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 const userData = db.define('userDataDb',{
 	userListName:{type:Sequelize.DataTypes.TEXT},
 	userListCounter:{type:Sequelize.DataTypes.TEXT},
     userListData:{type:Sequelize.DataTypes.TEXT },
 	userStats:{type:Sequelize.DataTypes.TEXT},
-	userListTaskCounter:{type:Sequelize.DataTypes.TEXT}
+	userListTaskCounter:{type:Sequelize.DataTypes.TEXT},
 })
 
 userData.belongsTo(users);

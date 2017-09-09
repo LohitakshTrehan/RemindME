@@ -3,7 +3,10 @@ var counterList = 0;
 var listName = [];
 var listTasks = [];
 var taskCounter = [];
-
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+var pending_tasks = 0;
+var done_tasks = 0;
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 $(function () {
      //RETRIEVING DATA FOR LOCAL VARIABLES
       retrieveData();
@@ -36,7 +39,6 @@ $(function () {
     );
     //MATERIALIZE INITIALIZER FUNCTION ENDS.
 
-    //******************************************************LOHITAKSH*************************************************************************//
     //GOOGLE CHART APIs BEGIN
 
     // Load the Visualization API and the corechart package.
@@ -84,7 +86,6 @@ $(function () {
     //collapsible data
     $('.collapsible').collapsible();
     //------------------------
-//******************************************************LOHITAKSH******************************************************************
 
 
 
@@ -228,17 +229,55 @@ function showContentTask(a) {
         $('.contentTask').css("display", "none");
     else {
         $('.contentTask').empty();
-        for (let j of listTasks[a - 1]) {
+        for (let j in listTasks[a - 1]) {
             $('.contentTask').css("display","block");
-            $('.contentTask').append(`    <li>
-             <div class="collapsible-header" style="background-color: #a1887f"><img class="brand-logo responsive-img" src="logo.png" height="30" width="30">&nbsp; &nbsp; ${j.task}
-             <div style="position: absolute; right: 10px; cursor: pointer"><i class="fa fa-times"></i></div></div>
-             <div class="collapsible-body" style="background-color: white"><span><b>Date</b> : ${j.date}</span><span style="float: right"><b>Time:</b> ${j.time}</span></div>
+            $('.contentTask').append(`    <li id="list${parseInt(a-1)+1}Task${parseInt(j)+1}">
+             <div class="collapsible-header" style="background-color: #a1887f"><img class="brand-logo responsive-img" src="logo.png" height="30" width="30">&nbsp; &nbsp; ${listTasks[a-1][j].task}
+             <div style="position: absolute; right: 10px; cursor: pointer" id="deleteList${parseInt(a-1)+1}Task${parseInt(j)+1}"><i class="fa fa-times"></i></div></div>
+             <div class="collapsible-body" style="background-color: white"><span><b>Date</b> : ${listTasks[a-1][j].date}</span><span style="float: right"><b>Time:</b> ${listTasks[a-1][j].time}</span></div>
             </li>
             `);
-        }
+            $(`#deleteList${parseInt(a-1)+1}Task${parseInt(j)+1}`).click(function(){
+                var workingId = jQuery(this).attr("id");
+                let ListId = '';
 
+                for (var j = 10; j < workingId.length; j++)
+                {
+                    if(isNaN(Number(workingId[j])))
+                        break;
+                    ListId += workingId[j];
+                }
+                let taskId = '';
+                let k = workingId.length - 1;
+                while(!isNaN(workingId[k])){
+                    taskId += workingId[k];
+                    k--;
+                }
+                taskId = reverseString(taskId);
+                ListId = parseInt(ListId);
+                taskId = parseInt(taskId);
+
+                listTasks[ListId - 1].splice(taskId - 1,1);
+                taskCounter[ListId - 1]--;
+
+                updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                pending_tasks--
+                update_piechart(done_tasks,pending_tasks)
+                retrieveData();
+                drawTable()
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+            })
+        }
     }
+}
+//reversing String
+function reverseString(a){
+    var splitString = a.split("");
+    var reverseArray = splitString.reverse();
+    var joinString = reverseArray.join("");
+
+    return joinString;
 }
 
 //Storing/Updating Data in Database.
@@ -269,7 +308,18 @@ function updateTask(a,b){
             console.log("success");
     });
 }
-
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+function update_piechart(a,b){
+    $.post('/updatePieChart',{ done_tasks: a,pending_tasks : b},function(data){
+        if(data.success == true) {
+            console.log("success");
+            retrieveData();
+            drawChart1();
+            drawChart2();
+        }
+    });
+}
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 //For refreshing System After any Kind of Change in database.
 function refreshSystem(){
     $('.allLists').empty();
@@ -314,6 +364,11 @@ function refreshSystem(){
                     taskCounter[sequenceClickId - 1]++;
                     showContentTask(sequenceClickId);
                     updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                    pending_tasks++
+                    update_piechart(done_tasks,pending_tasks)
+                    drawTable();
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                 }
                 //console.log(listTasks);
 
@@ -339,11 +394,15 @@ function refreshSystem(){
             }
           //  console.log(listName);
             updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+            retrieveData();
+            drawTable();
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
         })
     }
 }
-
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 // For retrieving Data from Database. Only executed at Start of Webpage.
 function retrieveData() {
     $.get('/retrieveData',function(data){
@@ -356,13 +415,20 @@ function retrieveData() {
             console.log(listTasks)
             taskCounter = JSON.parse(data.userListTaskCounter);
             console.log(taskCounter);
-            refreshSystem();
         }
     })
+    $.get('/retrievePieChart',function (data) {
+        if(data != null)
+        {
+            console.log(data);
+            done_tasks=data.TaskDoneCounter;
+            pending_tasks=data.TaskNotDoneCounter;
+        }
+    })
+    refreshSystem();
 }
 
-
-//******************************************************LOHITAKSH*************************************************************************//
+//BELOW FUNCTIONS DRAW CHARTS
 function drawChart1() {
 
     // Create the data table.
@@ -370,8 +436,8 @@ function drawChart1() {
     data.addColumn('string', 'Task Type');
     data.addColumn('number', 'Count');
     data.addRows([
-        ['Pending Tasks', 5],                            // SOURABH, PUT THE VARIABLES FOR CHART HERE
-        ['Completed Tasks', 1],
+        ['Pending Tasks', pending_tasks],
+        ['Completed Tasks', done_tasks],
     ]);
 
     // Set chart options
@@ -394,8 +460,8 @@ function drawChart2() {
     data.addColumn('string', 'Task Type');
     data.addColumn('number', 'Count');
     data.addRows([
-        ['Pending Tasks', 5],                            // SOURABH, PUT THE VARIABLES FOR CHART HERE
-        ['Completed Tasks', 1],
+        ['Pending Tasks', pending_tasks],
+        ['Completed Tasks', done_tasks],
     ]);
 
     // Set chart options
@@ -411,17 +477,20 @@ function drawChart2() {
     var chart2 = new google.visualization.PieChart(document.getElementById('chart_div2'));
     chart2.draw(data, options);
 }
+
+function cal_table_stats(name_of_list,task_in_lists) {
+    e=[];
+    for ( var i=0;i<name_of_list.length;i++) { e[i] = [name_of_list[i],task_in_lists[i]] }
+    e.sort(function descc(a,b){return (b[1]-a[1])});
+    f=[]
+    for(var i=0; i<5 && i<e.length;i++){f[i]=e[i]}
+    return f;
+}
 function drawTable() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'LIST NAMES WITH MOST TASKS');
     data.addColumn('number', 'COUNT IN DESC ORDER');
-    data.addRows([
-        ['work',  36],
-        ['home',   33],
-        ['kitchen', 30],                                // SOURABH, PUT THE VARIABLES FOR CHART HERE
-        ['travel',  25],
-        ['misslaneous',3]
-    ]);
+    data.addRows(cal_table_stats(listName,taskCounter));
 
     var table1 = new google.visualization.Table(document.getElementById('table_div1'));
     var table2 = new google.visualization.Table(document.getElementById('table_div2'));
@@ -429,4 +498,17 @@ function drawTable() {
     table1.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
     table2.draw(data, {showRowNumber: true, width: '100%', height: '50%'});
 }
-//******************************************************LOHITAKSH*************************************************************************//
+
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
+$(document).ready(function() {
+    function setHeight() {
+        windowHeight = $(window).innerHeight();
+        $('.contentHomePage').css('min-height', windowHeight);
+    };
+    setHeight();
+
+    $(window).resize(function() {
+        setHeight();
+    });
+});
