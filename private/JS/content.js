@@ -95,6 +95,9 @@ $(function () {
     $('.homeImg').click(function(){
         $('.listHeadingContent').css("display","none");
         $('.contentHomePage').css("display","block");
+        retrieveData();
+        drawTable()
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     })
 
     //HIDES DATA ON listHeadingContent CLASS.
@@ -265,14 +268,12 @@ function showContentTask(a) {
 
                  listTasks[ListId - 1].splice(taskId - 1,1);
                  taskCounter[ListId - 1]--;
-
-                updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+                showContentTask(ListId);
+                updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
 
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                 pending_tasks--
                 update_piechart(done_tasks,pending_tasks)
-                retrieveData();
-                drawTable()
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
               //  deleteLinkTimeTask(listTasks[a-1][j])
@@ -314,6 +315,13 @@ function updateData(a,b,c,d){
     refreshSystem();
 }
 
+function updateTask(a,b){
+    $.post('/updateTasks',{Tasks : a,counterList: b},function(data){
+        if(data.success == true)
+            console.log("real success");
+    })
+}
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 function update_piechart(a,b){
     $.post('/updatePieChart',{ done_tasks: a,pending_tasks : b},function(data){
@@ -321,8 +329,6 @@ function update_piechart(a,b){
             console.log("success");
 
             //**************SHOULD USE CALLBACK/PROMISE HERE
-
-            retrieveData();
             drawChart1();
             drawChart2();
         }
@@ -423,18 +429,17 @@ function refreshSystem(){
                     console.log(listTasks);
                     taskCounter[sequenceClickId - 1]++;
                     showContentTask(sequenceClickId);
-                    updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+                    updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                     pending_tasks++
                     update_piechart(done_tasks,pending_tasks)
-                    drawTable();
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                 }
                 //console.log(listTasks);
 
             };
         })
-
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
         $(`#listDelete${parseInt(i)+1}`).click(function(event){
             var currentListId = jQuery(this).attr("id");
             let sequenceListId = '';
@@ -448,6 +453,8 @@ function refreshSystem(){
                     listName.splice(i,1);
                     counterList--;
                     listTasks.splice(i,1);
+                    pending_tasks-=taskCounter[i];
+                    update_piechart(done_tasks,pending_tasks)
                     taskCounter.splice(i,1);
                     break;
                 }
@@ -455,17 +462,17 @@ function refreshSystem(){
           //  console.log(listName);
             updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
 
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-            retrieveData();
             drawTable();
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
         })
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
     }
 }
 
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 // For retrieving Data from Database. Only executed at Start of Webpage.
+
+
 function retrieveData() {
     $.get('/retrieveData',function(data){
         if(data != null) {

@@ -182,6 +182,23 @@ app.post('/send',function(req,res) {
     })
 });
 
+app.post('/updateTasks',function(req,res) {
+    console.log(req.body);
+    console.log(req.user.id)
+    dbData.findOne({
+        where:{
+            userdbId : req.user.id
+        }
+    }).then(function (data) {
+        data.update({
+            userListTaskCounter: req.body.counterList,
+            userListData: req.body.Tasks,
+        }).then(function () {
+            res.send({success: true});
+        })
+    })
+})
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
 app.get('/retrievePieChart',function (req,res) {

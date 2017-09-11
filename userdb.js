@@ -40,7 +40,7 @@ const userData = db.define('userDataDb',{
 
 userData.belongsTo(users);
 
-db.sync({force:true}).then(function () {
+db.sync().then(function () {
 	console.log("database is ready");
 });
 
