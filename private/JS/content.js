@@ -3,6 +3,7 @@ var counterList = 0;
 var listName = [];
 var listTasks = [];
 var taskCounter = [];
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 var pending_tasks = 0;
 var done_tasks = 0;
@@ -39,7 +40,7 @@ $(function () {
     );
     //MATERIALIZE INITIALIZER FUNCTION ENDS.
 
-    //GOOGLE CHART APIs BEGIN
+    //******************************************************LOHITAKSH*************************************************************************//  //GOOGLE CHART APIs BEGIN
 
     // Load the Visualization API and the corechart package.
     google.charts.load('current', {'packages':['corechart']});
@@ -86,6 +87,7 @@ $(function () {
     //collapsible data
     $('.collapsible').collapsible();
     //------------------------
+//******************************************************LOHITAKSH******************************************************************
 
 
 
@@ -133,6 +135,7 @@ function Task(a,b,c)
     this.task = a;
     this.date = b;
     this.time = c;
+    this.sent = false;
 }
 
 //Validation of different fields
@@ -224,6 +227,7 @@ function checkTime(time){
 }
 
 // Validating time and date ends And Front End UI Work for Task Added Starts.
+//Sourabh Code 1.
 function showContentTask(a) {
     if (taskCounter[a - 1] == 0)
         $('.contentTask').css("display", "none");
@@ -237,36 +241,41 @@ function showContentTask(a) {
              <div class="collapsible-body" style="background-color: white"><span><b>Date</b> : ${listTasks[a-1][j].date}</span><span style="float: right"><b>Time:</b> ${listTasks[a-1][j].time}</span></div>
             </li>
             `);
+           // linkTimeTask(listTasks[a-1][j],a-1,j);
+
             $(`#deleteList${parseInt(a-1)+1}Task${parseInt(j)+1}`).click(function(){
                 var workingId = jQuery(this).attr("id");
-                let ListId = '';
+                 let ListId = '';
 
-                for (var j = 10; j < workingId.length; j++)
-                {
-                    if(isNaN(Number(workingId[j])))
-                        break;
-                    ListId += workingId[j];
-                }
-                let taskId = '';
-                let k = workingId.length - 1;
-                while(!isNaN(workingId[k])){
-                    taskId += workingId[k];
-                    k--;
-                }
-                taskId = reverseString(taskId);
-                ListId = parseInt(ListId);
-                taskId = parseInt(taskId);
+                 for (var j = 10; j < workingId.length; j++)
+                 {
+                     if(isNaN(Number(workingId[j])))
+                         break;
+                     ListId += workingId[j];
+                 }
+                 let taskId = '';
+                 let k = workingId.length - 1;
+                 while(!isNaN(workingId[k])){
+                     taskId += workingId[k];
+                     k--;
+                 }
+                 taskId = reverseString(taskId);
+                 ListId = parseInt(ListId);
+                 taskId = parseInt(taskId);
 
-                listTasks[ListId - 1].splice(taskId - 1,1);
-                taskCounter[ListId - 1]--;
+                 listTasks[ListId - 1].splice(taskId - 1,1);
+                 taskCounter[ListId - 1]--;
 
                 updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                 pending_tasks--
                 update_piechart(done_tasks,pending_tasks)
                 retrieveData();
                 drawTable()
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
+              //  deleteLinkTimeTask(listTasks[a-1][j])
             })
         }
     }
@@ -279,20 +288,23 @@ function reverseString(a){
 
     return joinString;
 }
+//Sourabh Code 1.
 
 //Storing/Updating Data in Database.
-
 function storeData(a,b,c,d){
     $.post('/storeDatabase',{name : a,counter : b, Tasks : c, counterList: d},function(data){
         if(data.success == true)
-            console.log("true success");
-        else
         {
-          //  console.log("succeess22");
+            console.log("true success");
+            refreshSystem();
+
+        }
+        else if(data.success == false)
+        {
+            console.log("succeess22");
             updateData(a,b,c,d);
         }
     });
-    refreshSystem();
 }
 function updateData(a,b,c,d){
     $.post('/updateDatabase',{name : a,counter : b, Tasks : c, counterList: d},function(data){
@@ -302,17 +314,14 @@ function updateData(a,b,c,d){
     refreshSystem();
 }
 
-function updateTask(a,b){
-    $.post('/updateTasks', {Tasks : a,counter: b},function(data){
-        if(data.success == true)
-            console.log("success");
-    });
-}
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 function update_piechart(a,b){
     $.post('/updatePieChart',{ done_tasks: a,pending_tasks : b},function(data){
         if(data.success == true) {
             console.log("success");
+
+            //**************SHOULD USE CALLBACK/PROMISE HERE
+
             retrieveData();
             drawChart1();
             drawChart2();
@@ -320,6 +329,56 @@ function update_piechart(a,b){
     });
 }
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
+
+//Sourabh Code 2
+
+function linkTimeTask(a,ListId,taskId){
+    var correctFormatDate =  correctFormat(a.date);
+   // console.log(correctFormatDate);
+    var R_Time = createResidualTime(correctFormatDate,a.time);
+    $.post('/send',{taskName: a.task,residualTime : R_Time},function(data){
+        if(data.success == true) {
+            listTasks[ListId].splice(taskId - 1,1);
+            taskCounter[ListId]--;
+            updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+            console.log("successfully send the email");
+        }
+    })
+}
+
+function correctFormat(d){
+    var splitArray = d.split('/');
+    splitArray[2] = "20" + splitArray[2];
+    return splitArray.join('/');
+}
+function createResidualTime(d,t){
+    var currentTime = Date.now();
+
+    currentTime  = new Date(currentTime);
+    currentTime = moment(currentTime);
+    currentTime = currentTime.tz("Asia/Kolkata")._d;
+    currentTime = Date.parse(currentTime);
+
+    var givenDate = String(d);
+    givenDate = new Date(givenDate);
+    givenDate = moment(givenDate);
+    givenDate = moment(givenDate).add(1,'days')._d;
+    givenDate.setUTCHours(0,0,0);
+    givenDate = Date.parse(givenDate);
+//    console.log("given Date :" + givenDate);
+
+    var givenTime = String(t);
+    var givenArray = givenTime.split(':');
+    givenTime = givenArray[0]*60*60*1000 + givenArray[1]*60*1000;
+//    console.log("given Time: " + givenTime);
+
+    var residualTime = givenDate - currentTime + givenTime;
+    console.log(residualTime);
+
+     return residualTime;
+}
+//Sourabh Code 2
 //For refreshing System After any Kind of Change in database.
 function refreshSystem(){
     $('.allLists').empty();
@@ -359,11 +418,12 @@ function refreshSystem(){
                 sequenceClickId = parseInt(sequenceClickId);
                 console.log(sequenceClickId);
                 if (validateFields(($('#taskAdder').val()), $('#DateAdder').val(), $('#TimeAdder').val())) {
-                    console.log("1");
+                    console.log("2");
                     listTasks[sequenceClickId - 1][taskCounter[sequenceClickId - 1]] = new Task($('#taskAdder').val(), $('#DateAdder').val(), $('#TimeAdder').val());
+                    console.log(listTasks);
                     taskCounter[sequenceClickId - 1]++;
                     showContentTask(sequenceClickId);
-                    updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
+                    updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                     pending_tasks++
                     update_piechart(done_tasks,pending_tasks)
@@ -394,6 +454,7 @@ function refreshSystem(){
             }
           //  console.log(listName);
             updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
             retrieveData();
             drawTable();
@@ -402,30 +463,28 @@ function refreshSystem(){
         })
     }
 }
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 // For retrieving Data from Database. Only executed at Start of Webpage.
 function retrieveData() {
     $.get('/retrieveData',function(data){
         if(data != null) {
-            console.log(data);
             counterList = data.userListCounter;
             listName = JSON.parse(data.userListName)
-            console.log(listName);
             listTasks = JSON.parse(data.userListData);
-            console.log(listTasks)
             taskCounter = JSON.parse(data.userListTaskCounter);
-            console.log(taskCounter);
+            refreshSystem();
         }
     })
     $.get('/retrievePieChart',function (data) {
-        if(data != null)
+        if(data != null)                                                      //**************SHOULD USE CALLBACK/PROMISE HERE
         {
-            console.log(data);
             done_tasks=data.TaskDoneCounter;
             pending_tasks=data.TaskNotDoneCounter;
+            refreshSystem()
         }
     })
-    refreshSystem();
+   // refreshSystem();
 }
 
 //BELOW FUNCTIONS DRAW CHARTS
@@ -501,6 +560,8 @@ function drawTable() {
 
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
+//Sourabh//
+
 $(document).ready(function() {
     function setHeight() {
         windowHeight = $(window).innerHeight();
@@ -512,3 +573,5 @@ $(document).ready(function() {
         setHeight();
     });
 });
+
+//Sourabh//

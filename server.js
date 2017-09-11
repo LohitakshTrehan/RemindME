@@ -9,7 +9,7 @@ const flash = require('connect-flash')
 const db = require('./userdb').users;
 const dbData = require('./userdb').userData;
 const app = express();
-
+const nodeMailer = require('nodemailer');
 app.use(cp('somerandomcharactersthatnooneknowslikechimichonga'));
 app.use(session({
 	secret: 'somerandomcharactersthatnooneknowslikechimichonga',
@@ -79,6 +79,7 @@ app.get('/datainfo',function(req,res){
 
 app.post('/storeDatabase',function(req,res) {
     console.log(req.body);
+    console.log(req.user.id)
     dbData.findOne({
         where : {
             userdbId : req.user.id
@@ -105,8 +106,11 @@ app.post('/storeDatabase',function(req,res) {
 
 app.post('/updateDatabase',function(req,res) {
     console.log(req.body);
+    console.log(req.user.id)
     dbData.findOne({
-        where: userdbId = req.user.id
+        where:{
+            userdbId : req.user.id
+        }
     }).then(function (data) {
         data.update({
             userListName: req.body.name,
@@ -120,22 +124,12 @@ app.post('/updateDatabase',function(req,res) {
     })
 })
 
-app.post('/updateTasks',function(req,res){
-	dbData.findOne({
-		where: userdbId = req.user.id
-	}).then(function(data){
-		data.update({
-			userListData: req.body.Tasks,
-			userListTaskCounter: req.body.counter
-		}).then(function(){
-			res.send({success: true});
-		})
-	})
-})
 
 app.get('/retrieveData',function(req,res){
 	dbData.findOne({
-		where: userdbId = req.user.id
+		where: {
+		    userdbId : req.user.id
+		}
 	}).then(function(data){
 		if(data != null) {
             console.log(data);
@@ -145,6 +139,49 @@ app.get('/retrieveData',function(req,res){
 		console.log(err);
 	})
 })
+
+//Sourabh For mailing data to User.
+var smtpTransport = nodeMailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "remidmeapp@gmail.com",
+        pass: "nodesofiiit"
+    }
+});
+
+app.post('/send',function(req,res) {
+    var emailUser;
+    db.findAll({
+        where: {
+            id: req.user.id
+        }
+    }).then(function (database) {
+        console.log(database)
+        emailUser = database[0].email;
+
+        //console.log(req.body.residualTime + "  " + req.body.taskName)
+        setTimeout(function () {
+            var mailOptions = {
+                from: 'remidmeapp@gmail.com',
+                to: emailUser,
+                subject: "REMINDER",
+                text:  req.body.taskName
+            }
+
+            console.log(mailOptions);
+            smtpTransport.sendMail(mailOptions, function (error, response) {
+                if (error) {
+                    console.log(error);
+                    res.end("error");
+                } else {
+                    console.log("Message sent: " + response.message);
+                    res.send({success: true});
+                }
+            });
+        },req.body.residualTime);
+    })
+});
+
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
 app.get('/retrievePieChart',function (req,res) {
