@@ -7,6 +7,7 @@ var taskCounter = [];
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 var pending_tasks = 0;
 var done_tasks = 0;
+var num_of_users=0;
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 $(function () {
      //RETRIEVING DATA FOR LOCAL VARIABLES
@@ -55,34 +56,6 @@ $(function () {
 
     //Google chart call ends
 
-    //Number counting begins
-    $("#statistic_num1").html($(`<div><p id="statistic_num">999</p></div>`));  //HERE REPLACE 999 BY ${i} i.e. a variable to assign
-    $("#statistic_num1").css("font-size", "60px");
-    $('#statistic_num1').each(function () {
-        $(this).prop('Counter',0).animate({
-            Counter: $(this).text()
-        }, {
-            duration: 2100,
-            easing: 'swing',
-            step: function (now) {
-                $(this).text(Math.ceil(now));
-            }
-        });
-    });
-    $("#statistic_num2").html($(`<div><p id="statistic_num">999</p></div>`));  //HERE REPLACE 999 BY ${i} i.e. a variable to assign
-    $("#statistic_num2").css("font-size", "60px");
-    $('#statistic_num2').each(function () {
-        $(this).prop('Counter',0).animate({
-            Counter: $(this).text()
-        }, {
-            duration: 2100,
-            easing: 'swing',
-            step: function (now) {
-                $(this).text(Math.ceil(now));
-            }
-        });
-    });
-    //Number counter ends
 
     //collapsible data
     $('.collapsible').collapsible();
@@ -465,9 +438,52 @@ function refreshSystem(){
             drawTable();
 
         })
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
     }
+    //Number counting begins
+    console.log("Mai data ab dalunga  "+ num_of_users);
+    $("#statistic_num1").html($(`<div><p id="statistic_num">${num_of_users}</p></div>`));  //HERE REPLACE 999 BY ${i} i.e. a variable to assign
+    $("#statistic_num1").css("font-size", "60px");
+    $('#statistic_num1').each(function () {
+        $(this).prop('Counter',0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 100,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    });
+    $("#statistic_num2").html($(`<div><p id="statistic_num">${num_of_users}</p></div>`));  //HERE REPLACE 999 BY ${i} i.e. a variable to assign
+    $("#statistic_num2").css("font-size", "60px");
+    $('#statistic_num2').each(function () {
+        $(this).prop('Counter',0).animate({
+            Counter: $(this).text()
+        }, {
+            duration: 100,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    });
+    //Number counter ends
 }
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 // For retrieving Data from Database. Only executed at Start of Webpage.
@@ -488,6 +504,14 @@ function retrieveData() {
         {
             done_tasks=data.TaskDoneCounter;
             pending_tasks=data.TaskNotDoneCounter;
+            refreshSystem()
+        }
+    })
+    $.get('/numOfUsers',function (data) {
+        if(data!=null && data>=0)
+        {
+            console.log("mai DATA HUN "+parseInt(data));
+            num_of_users=parseInt(data);
             refreshSystem()
         }
     })

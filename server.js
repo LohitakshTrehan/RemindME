@@ -227,4 +227,12 @@ app.post('/updatePieChart',function (req,res) {
     })
 })
 
+app.get('/numOfUsers',function (req, res) {
+    db.count().then( function (data){
+        if(data>=0)
+            res.status(200).send(data.toString());
+    }).catch(function (err) {
+        console.log(err);
+    })
+})
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
