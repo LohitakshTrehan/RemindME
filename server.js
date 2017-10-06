@@ -124,7 +124,22 @@ app.post('/updateDatabase',function(req,res) {
     })
 })
 
-
+app.post('/updateTasks',function(req,res) {
+    console.log(req.body);
+    console.log(req.user.id)
+    dbData.findOne({
+        where:{
+            userdbId : req.user.id
+        }
+    }).then(function (data) {
+        data.update({
+            userListTaskCounter: req.body.counterList,
+            userListData: req.body.Tasks,
+        }).then(function () {
+            res.send({success: true});
+        })
+    })
+})
 app.get('/retrieveData',function(req,res){
 	dbData.findOne({
 		where: {
@@ -144,7 +159,7 @@ app.get('/retrieveData',function(req,res){
 var smtpTransport = nodeMailer.createTransport({
     service: "gmail",
     auth: {
-        user: "remidmeapp@gmail.com",
+        user: "remindmecommunity@gmail.com",
         pass: "nodesofiiit"
     }
 });
@@ -162,7 +177,7 @@ app.post('/send',function(req,res) {
         //console.log(req.body.residualTime + "  " + req.body.taskName)
         setTimeout(function () {
             var mailOptions = {
-                from: 'remidmeapp@gmail.com',
+                from: 'remindmecommunity@gmail.com',
                 to: emailUser,
                 subject: "REMINDER",
                 text:  req.body.taskName
@@ -181,26 +196,7 @@ app.post('/send',function(req,res) {
         },req.body.residualTime);
     })
 });
-
-app.post('/updateTasks',function(req,res) {
-    console.log(req.body);
-    console.log(req.user.id)
-    dbData.findOne({
-        where:{
-            userdbId : req.user.id
-        }
-    }).then(function (data) {
-        data.update({
-            userListTaskCounter: req.body.counterList,
-            userListData: req.body.Tasks,
-        }).then(function () {
-            res.send({success: true});
-        })
-    })
-})
-
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-
 app.get('/retrievePieChart',function (req,res) {
     db.findOne({
         where: userdbId = req.user.id
@@ -213,7 +209,6 @@ app.get('/retrievePieChart',function (req,res) {
         console.log(err);
     })
 })
-
 app.post('/updatePieChart',function (req,res) {
     db.findOne({
         where: userdbId = req.user.id
@@ -226,7 +221,6 @@ app.post('/updatePieChart',function (req,res) {
         })
     })
 })
-
 app.get('/numOfUsers',function (req, res) {
     db.count().then( function (data){
         if(data>=0)

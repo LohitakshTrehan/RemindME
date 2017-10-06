@@ -9,6 +9,7 @@ var pending_tasks = 0;
 var done_tasks = 0;
 var num_of_users=0;
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+
 $(function () {
      //RETRIEVING DATA FOR LOCAL VARIABLES
       retrieveData();
@@ -41,8 +42,8 @@ $(function () {
     );
     //MATERIALIZE INITIALIZER FUNCTION ENDS.
 
-    //******************************************************LOHITAKSH*************************************************************************//  //GOOGLE CHART APIs BEGIN
-
+    //******************************************************LOHITAKSH*************************************************************************//
+    // GOOGLE CHART APIs BEGIN
     // Load the Visualization API and the corechart package.
     google.charts.load('current', {'packages':['corechart']});
     //google.charts.load('current', {'packages':['bar']});
@@ -56,30 +57,50 @@ $(function () {
 
     //Google chart call ends
 
-
     //collapsible data
     $('.collapsible').collapsible();
     //------------------------
-//******************************************************LOHITAKSH******************************************************************
-
-
+    //******************************************************LOHITAKSH*************************************************************************//
 
     //DISPLAYS DATA OF HOME PAGE ON CLICKING LOGO.
     $('.homeImg').click(function(){
+        ////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
+        window.location.reload();
         $('.listHeadingContent').css("display","none");
         $('.contentHomePage').css("display","block");
         retrieveData();
-        drawTable()
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+        drawTable();
+        paintimptasks();
+        ////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
     })
 
     //HIDES DATA ON listHeadingContent CLASS.
     $('.listHeadingContent').css("display","none");
 
     //PERFORMS DIFFERENT FUNCTIONS ON INDIVUAL LISTS AND THEIR TASKS.
+    //Sourabh Code -----------------------------------------------------Sourabh ------------------------------------------//
     $('.addListBtn').click(function() {
+        $('.listHeadingContent').css("display","none");
+        $('.contentHomePage').css("display","block");
+        listId = 0;
+        flag = true;
+        while(true){
+            listId++;
+            for(var i=0;i<counterList;i++){
+                flag = true;
+                if(parseInt(listName[i].id) == listId){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+                break;
+        }
         var listValue = $('.addList').val();
-        listName[counterList] = listValue;
+        listName[counterList] = {
+            name : listValue,
+            id : listId
+        };
         taskCounter[counterList] = 0;
         listTasks[counterList] = [];
         counterList++;
@@ -88,7 +109,7 @@ $(function () {
         else
           updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
     });
-
+     //Sourabh Code --------- Sourabh -----------------------------------------------//
     //EXTRACTING DATABASE TO GET INFORMATION ABOUT USER LOGGED IN.
     $.get('/datainfo',function (data) {
         console.log(data);
@@ -112,6 +133,7 @@ function Task(a,b,c)
     this.date = b;
     this.time = c;
     this.sent = false;
+    this.id = 0;
 }
 
 //Validation of different fields
@@ -131,6 +153,7 @@ function validateTimeandDate(date,time){
           return 0;
       }
       var year = date.substring(6,8);
+      if(year)
       date = date.substring(0,6);
       date += "20" + year;
       console.log(date);
@@ -169,7 +192,8 @@ function checkForNegativeResidual(givenDate,givenTime){
     givenTime = givenArray[0]*60*60*1000 + givenArray[1]*60*1000;
 
     var residualTime = givenDate - currentTime + givenTime;
-    //console.log(residualTime);
+    console.log(residualTime);
+
     if(residualTime > 0)
         return 1;
     else
@@ -203,13 +227,15 @@ function checkTime(time){
 }
 
 // Validating time and date ends And Front End UI Work for Task Added Starts.
-//Sourabh Code 1.
+//Sourabh Code --------------------------------- Sourabh ------------------------------------------------- //
 function showContentTask(a) {
     if (taskCounter[a - 1] == 0)
         $('.contentTask').css("display", "none");
     else {
         $('.contentTask').empty();
+
         for (let j in listTasks[a - 1]) {
+            console.log(listTasks[a-1][j]);
             $('.contentTask').css("display","block");
             $('.contentTask').append(`    <li id="list${parseInt(a-1)+1}Task${parseInt(j)+1}">
              <div class="collapsible-header" style="background-color: #a1887f"><img class="brand-logo responsive-img" src="logo.png" height="30" width="30">&nbsp; &nbsp; ${listTasks[a-1][j].task}
@@ -217,8 +243,8 @@ function showContentTask(a) {
              <div class="collapsible-body" style="background-color: white"><span><b>Date</b> : ${listTasks[a-1][j].date}</span><span style="float: right"><b>Time:</b> ${listTasks[a-1][j].time}</span></div>
             </li>
             `);
-           // linkTimeTask(listTasks[a-1][j],a-1,j);
-
+            linkTimeTask(listTasks[a-1][j],a-1,j);
+            console.log("letse eee")
             $(`#deleteList${parseInt(a-1)+1}Task${parseInt(j)+1}`).click(function(){
                 var workingId = jQuery(this).attr("id");
                  let ListId = '';
@@ -241,19 +267,19 @@ function showContentTask(a) {
 
                  listTasks[ListId - 1].splice(taskId - 1,1);
                  taskCounter[ListId - 1]--;
-                showContentTask(ListId);
-                updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
+                 console.log(taskCounter[ListId-1]);
+                 showContentTask(ListId);
+                 updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
+             ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                pending_tasks--;
+                update_piechart(done_tasks,pending_tasks);
+             ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-                pending_tasks--
-                update_piechart(done_tasks,pending_tasks)
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-
-              //  deleteLinkTimeTask(listTasks[a-1][j])
             })
         }
     }
 }
+//Sourabh Code -------------------------------------------------- Sourabh Code ------------------------------------------------
 //reversing String
 function reverseString(a){
     var splitString = a.split("");
@@ -262,7 +288,6 @@ function reverseString(a){
 
     return joinString;
 }
-//Sourabh Code 1.
 
 //Storing/Updating Data in Database.
 function storeData(a,b,c,d){
@@ -287,20 +312,20 @@ function updateData(a,b,c,d){
     });
     refreshSystem();
 }
-
 function updateTask(a,b){
     $.post('/updateTasks',{Tasks : a,counterList: b},function(data){
-        if(data.success == true)
-            console.log("real success");
+      if(data.success == true)
+          console.log("real success");
     })
 }
+//Sourabh Code --------------------------------------------- Sourabh ----------------->
 
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 function update_piechart(a,b){
     $.post('/updatePieChart',{ done_tasks: a,pending_tasks : b},function(data){
         if(data.success == true) {
-            console.log("success");
-
+            //   console.log("success");
+            console.log("Pie chart update requested with done tasks="+a+" ,pending tasks="+b);
             //**************SHOULD USE CALLBACK/PROMISE HERE
             drawChart1();
             drawChart2();
@@ -309,23 +334,38 @@ function update_piechart(a,b){
 }
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
+function linkTimeTask(a,ListId,taskId) {
+    if (a.sent == false) {
+        a.sent = true;
+        var correctFormatDate = correctFormat(a.date);
+        // console.log(correctFormatDate);
+        var R_Time = createResidualTime(correctFormatDate, a.time);
+        if (R_Time < 2147483647) {
+            $.post('/send', {taskName: a.task, residualTime: R_Time}, function (data) {
+                if (data.success == true) {
+                    console.log("successfully send the email")
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                    pending_tasks--;
+                    done_tasks++;
+                    update_piechart(done_tasks,pending_tasks);
+                    //retieve data and draw table should be used here instead
+////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                }
+            })
+            console.log(R_Time);
 
-//Sourabh Code 2
-
-function linkTimeTask(a,ListId,taskId){
-    var correctFormatDate =  correctFormat(a.date);
-   // console.log(correctFormatDate);
-    var R_Time = createResidualTime(correctFormatDate,a.time);
-    $.post('/send',{taskName: a.task,residualTime : R_Time},function(data){
-        if(data.success == true) {
-            listTasks[ListId].splice(taskId - 1,1);
-            taskCounter[ListId]--;
-            updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
-            console.log("successfully send the email");
+            setTimeout(function(){
+                listTasks[ListId].splice(taskId, 1);
+                taskCounter[ListId]--;
+                updateData(JSON.stringify(listName), JSON.stringify(taskCounter), JSON.stringify(listTasks), counterList);
+            },R_Time);
         }
-    })
+        else
+            a.sent = false;
+    }
 }
 
+//Sourabh ----------------------- Sourabh ------------------------------------------//
 function correctFormat(d){
     var splitArray = d.split('/');
     splitArray[2] = "20" + splitArray[2];
@@ -353,25 +393,23 @@ function createResidualTime(d,t){
 //    console.log("given Time: " + givenTime);
 
     var residualTime = givenDate - currentTime + givenTime;
-    console.log(residualTime);
+  //  console.log(residualTime);
 
      return residualTime;
 }
-//Sourabh Code 2
 //For refreshing System After any Kind of Change in database.
-function refreshSystem(){
+//Sourabh _---------------------------------- Sourabh -----------------------------//
+function refreshSystem() {
     $('.allLists').empty();
 
-    for(var i in listName)
-    {
+    for (var i in listName) {
 
-            $('.allLists').append(`
-                        <li id= "list${parseInt(i)+1}"><a id = "listDelete${parseInt(i)+1}" style="float: right; cursor: pointer"><i class="fa fa-times"></i></a><a href="#!"><i class="fa fa-list"  aria-hidden="true"></i>
-                            ${listName[i]}</a></li>`);
+        $('.allLists').append(`
+                        <li id= "list${parseInt(i) + 1}"><a id = "listDelete${parseInt(i) + 1}" style="float: right; cursor: pointer"><i class="fa fa-times"></i></a><a href="#!"><i class="fa fa-list"  aria-hidden="true"></i>
+                            ${listName[i].name}</a></li>`);
+        showContentTask(parseInt(i) + 1);
 
-        showContentTask(parseInt(i)+1);
-
-        $(`#list${parseInt(i)+1}`).click(function (event) {
+        $(`#list${parseInt(i) + 1}`).click(function (event) {
             $('.contentHomePage').css("display", "none");
             var currentListId = jQuery(this).attr("id");
             $('.listHeadingContent').css("display", "block");
@@ -381,7 +419,7 @@ function refreshSystem(){
                 sequenceListId += currentListId[j];
 
             sequenceListId = parseInt(sequenceListId);
-            $('.listHeadingContent').children()[0].children[0].innerText = listName[sequenceListId - 1];
+            $('.listHeadingContent').children()[0].children[0].innerText = listName[sequenceListId - 1].name;
             $('.addTaskBtn').attr("id", "click" + sequenceListId);
 
             showContentTask(sequenceListId);
@@ -397,51 +435,72 @@ function refreshSystem(){
                 sequenceClickId = parseInt(sequenceClickId);
                 console.log(sequenceClickId);
                 if (validateFields(($('#taskAdder').val()), $('#DateAdder').val(), $('#TimeAdder').val())) {
-                    console.log("2");
+                    //  console.log("2");
                     listTasks[sequenceClickId - 1][taskCounter[sequenceClickId - 1]] = new Task($('#taskAdder').val(), $('#DateAdder').val(), $('#TimeAdder').val());
                     console.log(listTasks);
+                    listId = listName[sequenceClickId - 1].id
+                    taskId = 0
+                    flag = true;
+                    while (true) {
+                        taskId++;
+                        flag = true
+                        for (var i = 0; i < taskCounter[sequenceClickId - 1]; i++) {
+                            var arr = listTasks[sequenceClickId - 1][i].id.split('T');
+                            arr[1] = parseInt(arr[1])
+                            if (arr[1] == taskId) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag)
+                            break;
+                    }
+                    listTasks[sequenceClickId - 1][taskCounter[sequenceClickId - 1]].id = String(listId) + "T" + String(taskId);
                     taskCounter[sequenceClickId - 1]++;
                     showContentTask(sequenceClickId);
-                    updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
+                    updateTask(JSON.stringify(listTasks), JSON.stringify(taskCounter));
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                     pending_tasks++
-                    update_piechart(done_tasks,pending_tasks)
+                    console.log("here are pending tasks " + pending_tasks);
+                    update_piechart(done_tasks, pending_tasks)
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                 }
                 //console.log(listTasks);
 
             };
         })
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-        $(`#listDelete${parseInt(i)+1}`).click(function(event){
+
+
+////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
+        $(`#listDelete${parseInt(i) + 1}`).click(function (event) {
+            $('.listHeadingContent').css("display", "none");
+            $('.contentHomePage').css("display", "block");
             var currentListId = jQuery(this).attr("id");
             let sequenceListId = '';
             for (var j = 10; j < currentListId.length; j++)
                 sequenceListId += currentListId[j];
             sequenceListId = parseInt(sequenceListId);
-            console.log(sequenceListId);
-            for(var i in listName){
-                if(i == sequenceListId - 1)
-                {
-                    listName.splice(i,1);
+            //     console.log(sequenceListId);
+            for (var i in listName) {
+                if (i == sequenceListId - 1) {
+                    listName.splice(i, 1);
                     counterList--;
-                    listTasks.splice(i,1);
-                    pending_tasks-=taskCounter[i];
-                    update_piechart(done_tasks,pending_tasks)
-                    taskCounter.splice(i,1);
+                    listTasks.splice(i, 1);
+                    pending_tasks -= taskCounter[i];
+                    update_piechart(done_tasks, pending_tasks)
+                    taskCounter.splice(i, 1);
                     break;
                 }
             }
-          //  console.log(listName);
-            updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
-
+            //  console.log(listName);
+            updateData(JSON.stringify(listName), JSON.stringify(taskCounter), JSON.stringify(listTasks), counterList);
             drawTable();
 
         })
-
     }
+
     //Number counting begins
-    console.log("Mai data ab dalunga  "+ num_of_users);
+    // console.log("Mai data ab dalunga  "+ num_of_users);
     $("#statistic_num1").html($(`<div><p id="statistic_num">${num_of_users}</p></div>`));  //HERE REPLACE 999 BY ${i} i.e. a variable to assign
     $("#statistic_num1").css("font-size", "60px");
     $('#statistic_num1').each(function () {
@@ -469,33 +528,28 @@ function refreshSystem(){
         });
     });
     //Number counter ends
+    paintimptasks();
 }
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
 
-
-
-
-
-
-
-
-
-
-
-
+//Sourabh ----------------------------------- Sourabh --------------------------------------->
 
 
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 // For retrieving Data from Database. Only executed at Start of Webpage.
-
-
 function retrieveData() {
+    console.log('show something')
     $.get('/retrieveData',function(data){
+        console.log(data);
         if(data != null) {
+          //  console.log(data);
             counterList = data.userListCounter;
             listName = JSON.parse(data.userListName)
+          //  console.log(listName);
             listTasks = JSON.parse(data.userListData);
+          //  console.log(listTasks)
             taskCounter = JSON.parse(data.userListTaskCounter);
+          //  console.log(taskCounter);
             refreshSystem();
         }
     })
@@ -504,18 +558,18 @@ function retrieveData() {
         {
             done_tasks=data.TaskDoneCounter;
             pending_tasks=data.TaskNotDoneCounter;
+            console.log("Retrieved Pie chart with donetasks="+done_tasks+" pending tasks="+pending_tasks);
             refreshSystem()
         }
     })
     $.get('/numOfUsers',function (data) {
         if(data!=null && data>=0)
         {
-            console.log("mai DATA HUN "+parseInt(data));
+            //  console.log("mai DATA HUN "+parseInt(data));
             num_of_users=parseInt(data);
             refreshSystem()
         }
     })
-   // refreshSystem();
 }
 
 //BELOW FUNCTIONS DRAW CHARTS
@@ -527,7 +581,7 @@ function drawChart1() {
     data.addColumn('number', 'Count');
     data.addRows([
         ['Pending Tasks', pending_tasks],
-        ['Completed Tasks', done_tasks],
+        ['Completed Tasks', done_tasks]
     ]);
 
     // Set chart options
@@ -551,7 +605,7 @@ function drawChart2() {
     data.addColumn('number', 'Count');
     data.addRows([
         ['Pending Tasks', pending_tasks],
-        ['Completed Tasks', done_tasks],
+        ['Completed Tasks', done_tasks]
     ]);
 
     // Set chart options
@@ -570,12 +624,15 @@ function drawChart2() {
 
 function cal_table_stats(name_of_list,task_in_lists) {
     e=[];
-    for ( var i=0;i<name_of_list.length;i++) { e[i] = [name_of_list[i],task_in_lists[i]] }
+    for ( var i=0;i<name_of_list.length;i++) { e[i] = [name_of_list[i].name,task_in_lists[i]] }
     e.sort(function descc(a,b){return (b[1]-a[1])});
-    f=[]
+    f=[];
     for(var i=0; i<5 && i<e.length;i++){f[i]=e[i]}
+    console.log("This  is F being returned");
+    console.log(f);
     return f;
 }
+
 function drawTable() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'LIST NAMES WITH MOST TASKS');
@@ -588,10 +645,7 @@ function drawTable() {
     table1.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
     table2.draw(data, {showRowNumber: true, width: '100%', height: '50%'});
 }
-
 ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-
-//Sourabh//
 
 $(document).ready(function() {
     function setHeight() {
@@ -605,4 +659,35 @@ $(document).ready(function() {
     });
 });
 
-//Sourabh//
+
+
+////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
+function MyCompare(a,b) {
+    var correctFormatDate1 = correctFormat(a.date);
+    var t1 = createResidualTime(correctFormatDate1, a.tim);
+    var correctFormatDate2 = correctFormat(b.date);
+    var t2 = createResidualTime(correctFormatDate2, b.tim);
+
+    return t1-t2;
+    //if returns <0 => a lower index
+    //if return 0  => no position change
+    // if >0 => b lower index
+}
+function paintimptasks() {
+    //okk now lets store all tasks at once
+    var arr= new Array();
+    for(let x=0;x<listTasks.length;x++)
+        for(let y=0;y<listTasks[x].length;y++)
+            arr.push({msg:listTasks[x][y].task, date:listTasks[x][y].date, tim: listTasks[x][y].time});
+    console.log(arr);
+    arr.sort(MyCompare);
+    console.log("After sorting");
+    console.log(arr);
+    for(let i=1;i<=5 && i<=arr.length;i++) {
+        $('#imp' + i).html($(`<span id="${i}"><b><u>TASK: </u></b>${arr[i - 1].msg}<br><b><u>DATE: </u></b>${arr[i - 1].date}
+                              <br><b><u>TIME: </u></b>${arr[i-1].tim}</span>
+        `));
+    }
+}
+
+////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
