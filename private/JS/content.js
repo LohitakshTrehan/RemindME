@@ -1,18 +1,14 @@
-//GLOBAL VARIABLES FOR TASKS AND LISTS.
 var counterList = 0;
 var listName = [];
 var listTasks = [];
 var taskCounter = [];
-
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 var pending_tasks = 0;
 var done_tasks = 0;
 var num_of_users=0;
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
 $(function () {
-     //RETRIEVING DATA FOR LOCAL VARIABLES
-      retrieveData();
+    //RETRIEVING DATA FOR LOCAL VARIABLES
+    retrieveData();
     // MATERIALIZE INITIALIZER FUNCTION STARTS.
     $('.button-collapse').sideNav({
         menuWidth: 250,
@@ -20,7 +16,7 @@ $(function () {
         closeOnClick: true,
         draggable: true,
         onOpen: function(el) {  },
-      onClose: function(el) {  },
+        onClose: function(el) {  },
     });
     $('.button3-collapse').sideNav({
         menuWidth: 300,
@@ -42,7 +38,6 @@ $(function () {
     );
     //MATERIALIZE INITIALIZER FUNCTION ENDS.
 
-    //******************************************************LOHITAKSH*************************************************************************//
     // GOOGLE CHART APIs BEGIN
     // Load the Visualization API and the corechart package.
     google.charts.load('current', {'packages':['corechart']});
@@ -60,25 +55,21 @@ $(function () {
     //collapsible data
     $('.collapsible').collapsible();
     //------------------------
-    //******************************************************LOHITAKSH*************************************************************************//
 
     //DISPLAYS DATA OF HOME PAGE ON CLICKING LOGO.
     $('.homeImg').click(function(){
-        ////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
         window.location.reload();
         $('.listHeadingContent').css("display","none");
         $('.contentHomePage').css("display","block");
         retrieveData();
         drawTable();
         paintimptasks();
-        ////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
     })
 
     //HIDES DATA ON listHeadingContent CLASS.
     $('.listHeadingContent').css("display","none");
 
     //PERFORMS DIFFERENT FUNCTIONS ON INDIVUAL LISTS AND THEIR TASKS.
-    //Sourabh Code -----------------------------------------------------Sourabh ------------------------------------------//
     $('.addListBtn').click(function() {
         $('.listHeadingContent').css("display","none");
         $('.contentHomePage').css("display","block");
@@ -107,14 +98,13 @@ $(function () {
         if(counterList == 1)
             storeData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
         else
-          updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
+            updateData(JSON.stringify(listName),JSON.stringify(taskCounter),JSON.stringify(listTasks),counterList);
     });
-     //Sourabh Code --------- Sourabh -----------------------------------------------//
     //EXTRACTING DATABASE TO GET INFORMATION ABOUT USER LOGGED IN.
     $.get('/datainfo',function (data) {
         console.log(data);
-      $('.usernameSideNav').html(`${data[0].firstname} ${data[0].lastname}`);
-      $('.emailSideNav').html(`${data[0].email}`)
+        $('.usernameSideNav').html(`${data[0].firstname} ${data[0].lastname}`);
+        $('.emailSideNav').html(`${data[0].email}`)
     })
 });
 
@@ -147,29 +137,29 @@ function validateFields(a,b,c) {
     };
 }
 function validateTimeandDate(date,time){
-      if(date.length != 8)
-      {
-          alert("Date is not in Valid Form")
-          return 0;
-      }
-      var year = date.substring(6,8);
-      if(year)
-      date = date.substring(0,6);
-      date += "20" + year;
-      console.log(date);
-      if(!checkTime(time))
-          return 0;
-      else {
-          date = new Date(date);
-          date = moment(date);
-          if(!date.isValid())
-          {
-              alert("Date not in valid Form");
-              return 0;
-          }
-          else
-         return checkForNegativeResidual(date,time);
-      }
+    if(date.length != 8)
+    {
+        alert("Date is not in Valid Form")
+        return 0;
+    }
+    var year = date.substring(6,8);
+    if(year)
+        date = date.substring(0,6);
+    date += "20" + year;
+    console.log(date);
+    if(!checkTime(time))
+        return 0;
+    else {
+        date = new Date(date);
+        date = moment(date);
+        if(!date.isValid())
+        {
+            alert("Date not in valid Form");
+            return 0;
+        }
+        else
+            return checkForNegativeResidual(date,time);
+    }
 }
 function checkForNegativeResidual(givenDate,givenTime){
     var currentTime = Date.now();
@@ -177,7 +167,7 @@ function checkForNegativeResidual(givenDate,givenTime){
     currentTime  = new Date(currentTime);
     currentTime = moment(currentTime);
     currentTime = currentTime.tz("Asia/Kolkata")._d;
-  //  console.log(currentTime);
+    //  console.log(currentTime);
     currentTime = Date.parse(currentTime);
 
     givenDate = new Date(givenDate);
@@ -227,7 +217,6 @@ function checkTime(time){
 }
 
 // Validating time and date ends And Front End UI Work for Task Added Starts.
-//Sourabh Code --------------------------------- Sourabh ------------------------------------------------- //
 function showContentTask(a) {
     if (taskCounter[a - 1] == 0)
         $('.contentTask').css("display", "none");
@@ -247,39 +236,35 @@ function showContentTask(a) {
             console.log("letse eee")
             $(`#deleteList${parseInt(a-1)+1}Task${parseInt(j)+1}`).click(function(){
                 var workingId = jQuery(this).attr("id");
-                 let ListId = '';
+                let ListId = '';
 
-                 for (var j = 10; j < workingId.length; j++)
-                 {
-                     if(isNaN(Number(workingId[j])))
-                         break;
-                     ListId += workingId[j];
-                 }
-                 let taskId = '';
-                 let k = workingId.length - 1;
-                 while(!isNaN(workingId[k])){
-                     taskId += workingId[k];
-                     k--;
-                 }
-                 taskId = reverseString(taskId);
-                 ListId = parseInt(ListId);
-                 taskId = parseInt(taskId);
-
-                 listTasks[ListId - 1].splice(taskId - 1,1);
-                 taskCounter[ListId - 1]--;
-                 console.log(taskCounter[ListId-1]);
-                 showContentTask(ListId);
-                 updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
-             ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                for (var j = 10; j < workingId.length; j++)
+                {
+                    if(isNaN(Number(workingId[j])))
+                        break;
+                    ListId += workingId[j];
+                }
+                let taskId = '';
+                let k = workingId.length - 1;
+                while(!isNaN(workingId[k])){
+                    taskId += workingId[k];
+                    k--;
+                }
+                taskId = reverseString(taskId);
+                ListId = parseInt(ListId);
+                taskId = parseInt(taskId);
+                deleteLinkTimeTask(listTasks[ListId - 1][taskId -1 ]); //ONLY NEW ADDITION IN SHOW CONTENT TASK.
+                listTasks[ListId - 1].splice(taskId - 1,1);
+                taskCounter[ListId - 1]--;
+                console.log(taskCounter[ListId-1]);
+                showContentTask(ListId);
+                updateTask(JSON.stringify(listTasks),JSON.stringify(taskCounter));
                 pending_tasks--;
                 update_piechart(done_tasks,pending_tasks);
-             ////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-
             })
         }
     }
 }
-//Sourabh Code -------------------------------------------------- Sourabh Code ------------------------------------------------
 //reversing String
 function reverseString(a){
     var splitString = a.split("");
@@ -314,13 +299,11 @@ function updateData(a,b,c,d){
 }
 function updateTask(a,b){
     $.post('/updateTasks',{Tasks : a,counterList: b},function(data){
-      if(data.success == true)
-          console.log("real success");
+        if(data.success == true)
+            console.log("real success");
     })
 }
-//Sourabh Code --------------------------------------------- Sourabh ----------------->
 
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 function update_piechart(a,b){
     $.post('/updatePieChart',{ done_tasks: a,pending_tasks : b},function(data){
         if(data.success == true) {
@@ -332,40 +315,45 @@ function update_piechart(a,b){
         }
     });
 }
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-
-function linkTimeTask(a,ListId,taskId) {
+function linkTimeTask(a) {
     if (a.sent == false) {
         a.sent = true;
+        updateTask(JSON.stringify(listTasks),JSON.stringify(counterList));
         var correctFormatDate = correctFormat(a.date);
         // console.log(correctFormatDate);
         var R_Time = createResidualTime(correctFormatDate, a.time);
-        if (R_Time < 2147483647) {
-            $.post('/send', {taskName: a.task, residualTime: R_Time}, function (data) {
+        if (R_Time < 2147482647) {
+            $.post('/send', {taskName: a.task, residualTime: R_Time, id : a.id}, function (data) {
                 if (data.success == true) {
-                    console.log("successfully send the email")
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
-                    pending_tasks--;
-                    done_tasks++;
-                    update_piechart(done_tasks,pending_tasks);
-                    //retieve data and draw table should be used here instead
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
+                    console.log("successfully send the email And task is being deleted")
+                    ///////////////////////////////////////////////////////////////////////////////////////
+                }
+                else{
+                    console.log("task may have been deleted already")
                 }
             })
-            console.log(R_Time);
-
-            setTimeout(function(){
-                listTasks[ListId].splice(taskId, 1);
-                taskCounter[ListId]--;
-                updateData(JSON.stringify(listName), JSON.stringify(taskCounter), JSON.stringify(listTasks), counterList);
-            },R_Time);
+            //  console.log(R_Time);
         }
         else
-            a.sent = false;
+        {
+            $.post('/send2',{taskName : a.task, residualTime : R_Time , id:a.id},function(data){
+                if(data.success == true) {
+                    ///////////////////////////////////////////////////////////////////////////////////////
+                    console.log("data being sent");
+                }
+            })
+        }
     }
 }
+function deleteLinkTimeTask(a){
+    $.post('/deleteTimeOut', {id: a.id}, function (data) {
+        if (data.success == true)
+            console.log("successfully deleted timeout");
+        else
+            console.log("error");
+    })
+}
 
-//Sourabh ----------------------- Sourabh ------------------------------------------//
 function correctFormat(d){
     var splitArray = d.split('/');
     splitArray[2] = "20" + splitArray[2];
@@ -393,12 +381,11 @@ function createResidualTime(d,t){
 //    console.log("given Time: " + givenTime);
 
     var residualTime = givenDate - currentTime + givenTime;
-  //  console.log(residualTime);
+    //  console.log(residualTime);
 
-     return residualTime;
+    return residualTime;
 }
 //For refreshing System After any Kind of Change in database.
-//Sourabh _---------------------------------- Sourabh -----------------------------//
 function refreshSystem() {
     $('.allLists').empty();
 
@@ -459,11 +446,9 @@ function refreshSystem() {
                     taskCounter[sequenceClickId - 1]++;
                     showContentTask(sequenceClickId);
                     updateTask(JSON.stringify(listTasks), JSON.stringify(taskCounter));
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                     pending_tasks++
                     console.log("here are pending tasks " + pending_tasks);
                     update_piechart(done_tasks, pending_tasks)
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
                 }
                 //console.log(listTasks);
 
@@ -471,7 +456,6 @@ function refreshSystem() {
         })
 
 
-////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
         $(`#listDelete${parseInt(i) + 1}`).click(function (event) {
             $('.listHeadingContent').css("display", "none");
             $('.contentHomePage').css("display", "block");
@@ -480,6 +464,10 @@ function refreshSystem() {
             for (var j = 10; j < currentListId.length; j++)
                 sequenceListId += currentListId[j];
             sequenceListId = parseInt(sequenceListId);
+
+            for(let k=0;k<taskCounter[sequenceListId-1];k++){           //ONLY NEW ADDITION THIS LOOP.
+                deleteLinkTimeTask(listTasks[sequenceListId-1][k]);   //ONLY NEW ADDITION THIS LOOP IN REFRESH SYSTEM.
+            }
             //     console.log(sequenceListId);
             for (var i in listName) {
                 if (i == sequenceListId - 1) {
@@ -530,26 +518,22 @@ function refreshSystem() {
     //Number counter ends
     paintimptasks();
 }
-////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
-
-//Sourabh ----------------------------------- Sourabh --------------------------------------->
 
 
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 // For retrieving Data from Database. Only executed at Start of Webpage.
 function retrieveData() {
     console.log('show something')
     $.get('/retrieveData',function(data){
         console.log(data);
         if(data != null) {
-          //  console.log(data);
+            //  console.log(data);
             counterList = data.userListCounter;
             listName = JSON.parse(data.userListName)
-          //  console.log(listName);
+            //  console.log(listName);
             listTasks = JSON.parse(data.userListData);
-          //  console.log(listTasks)
+            //  console.log(listTasks)
             taskCounter = JSON.parse(data.userListTaskCounter);
-          //  console.log(taskCounter);
+            //  console.log(taskCounter);
             refreshSystem();
         }
     })
@@ -645,7 +629,6 @@ function drawTable() {
     table1.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
     table2.draw(data, {showRowNumber: true, width: '100%', height: '50%'});
 }
-////////////////////////////////////////*****************LOHITAKSH********************///////////////////////////////////////////
 
 $(document).ready(function() {
     function setHeight() {
@@ -661,7 +644,6 @@ $(document).ready(function() {
 
 
 
-////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////
 function MyCompare(a,b) {
     var correctFormatDate1 = correctFormat(a.date);
     var t1 = createResidualTime(correctFormatDate1, a.tim);
@@ -689,5 +671,3 @@ function paintimptasks() {
         `));
     }
 }
-
-////////////////////////////////////////////////////////////////////LOHITAKSH/////////////////////////////////////////////

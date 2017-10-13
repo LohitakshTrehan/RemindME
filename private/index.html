@@ -30,22 +30,20 @@
     <div class="modal-content">
         <h4 style='text-align: center; font-size: 20px; color: #262626;'>Create New List</h4></b>
         <div class="row">
-        <div  class="input-field col s11">
-            <input id="list_name" type="text" class="validate addList">
-            <label for="list_name">List Name</label>
-        </div>
+            <div  class="input-field col s11">
+                <input id="list_name" type="text" class="validate addList">
+                <label for="list_name">List Name</label>
+            </div>
             <div class="input-field col">
-        <a class="btn-floating btn waves-effect waves-light red addListBtn" style="float: right"><i class="fa fa-plus"></i></a>
+                <a class="btn-floating btn waves-effect waves-light red addListBtn" style="float: right"><i class="fa fa-plus"></i></a>
             </div>
-            </div>
-</div>
+        </div>
+    </div>
 </div>
 
 
 
 <!--------------------- NAVIGATION  ON SMALL SCREEN AND SIDE BAR IN GENERAL--------------------------------------------------------------->
-
-
 <ul id="slide-out" class="side-nav">
     <li><div class="user-view">
         <div class="background">
@@ -59,7 +57,7 @@
         <ul class="collapsible collapsible-accordion">
             <li>
                 <a class="collapsible-header">&nbsp;<i class="fa fa-caret-down fa-5x" aria-hidden="true"></i>
-                &nbsp;&nbsp;Categories</a>
+                    &nbsp;&nbsp;Categories</a>
                 <div class="collapsible-body" style="display: none;">
                     <ul class="allLists">
                     </ul>
@@ -67,19 +65,14 @@
             </li>
         </ul>
     </li>
-
 </ul>
-
 <nav  class="hide-on-large-only" style="background-color:#668964">
     <div class="nav-wrapper">
         <a href="#" data-activates="slide-out" class="left button3-collapse hide-on-large-only"><i class="fa fa-bars fa-3x" aria-hidden="true"></i></a>
         <a href="#" class="center brand-logo"><img class="responsive-img homeImg" style="cursor:pointer;"src="logo.png" height = "60px" width="60px"></a>
-         <a href="/logout" class="right hide-on-large-only"><i class="fa fa-sign-out fa-3x" aria-hidden="true"></i></a>
+        <a href="/logout" class="right hide-on-large-only"><i class="fa fa-sign-out fa-3x" aria-hidden="true"></i></a>
     </div>
 </nav>
-
-
-
 <!-------------------------------------------------------------------------------------------------------------------------->
 
 
@@ -88,32 +81,23 @@
 
 
 <!-- NAV BAR FOR BIG SCREEN------------------------------------------------------------------------------------------------->
-
-
 <nav class="hide-on-med-and-down" style="background-color:#668964; height : 45px ">
     <div class="nav-wrapper" style="line-height: 45px;">
-    <a href="#" data-activates="slide-out" class="left button3-collapse hide-on-med-and-down"><i class="fa fa-bars fa-2x" style="line-height: 45px; height: 45px"aria-hidden="true"></i></a>
+        <a href="#" data-activates="slide-out" class="left button3-collapse hide-on-med-and-down"><i class="fa fa-bars fa-2x" style="line-height: 45px; height: 45px"aria-hidden="true"></i></a>
         <img class="center brand-logo responsive-img homeImg" style="cursor: pointer"src="logo.png" height="45" width="45">
         <ul class="right hide-on-med-and-down">
             <li><a href="/logout"><i class="fa fa-2x fa-sign-out" style="line-height: 45px; height: 45px"></i> </a></li>
         </ul>
     </div>
 </nav>
-
-
-
-
 <!--------------------------------------------------------------------------------------------------------------------------->
-
-
 <!--------------------------------------------------------------------------------------------------------------------------->
-
 <!-- LIST HEADING AND CONTENT ADDER FOR INDIVUAL LIST-->
 <div class="listHeadingContent">
-<nav style="background-color: #262626; height : 45px ">
-    <div class="nav-wrapper" style="line-height: 45px; text-align: center; font-size: 30px">
-    </div>
-</nav>
+    <nav style="background-color: #262626; height : 45px ">
+        <div class="nav-wrapper" style="line-height: 45px; text-align: center; font-size: 30px">
+        </div>
+    </nav>
     <br>
     <div class="contentAdder row">
         <form class="col s12">
@@ -134,7 +118,7 @@
                     <label for="TimeAdder">Time(hh:mm)</label>
                 </div>
                 <div class="input-field col l1 s1 m1 taskAdd">
-            <a class="btn-floating btn waves-effect waves-light red addTaskBtn"><i class="fa fa-plus"></i></a>
+                    <a class="btn-floating btn waves-effect waves-light red addTaskBtn"><i class="fa fa-plus"></i></a>
                 </div>
             </div>
         </form>
@@ -149,12 +133,12 @@
 </div>
 <!-- CONTENT TO BE DISPLAYED ON HOME PAGE LIKE STATS OF USERLOGGED IN-->
 
-    <!--------------------------------------------------------------------------LOHITAKSH------------------------------------------------->
-    <style>
-        .google-visualization-table-td {
-            text-align: center !important;
-        }
-    </style>
+<!--------------------------------------------------------------------------LOHITAKSH------------------------------------------------->
+<style>
+    .google-visualization-table-td {
+        text-align: center !important;
+    }
+</style>
 <div class="contentHomePage" style="background: #fff;">
     <div class="hide-on-med-and-down row">
         <div class="col l5"><p style="margin: 30px; font-size: 25px;">TOTAL</p><p id="statistic_num1" style="margin: 30px"></p><p style="margin: 30px; font-size: 25px;">REGISTERED USERS</p></div>
