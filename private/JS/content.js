@@ -238,7 +238,7 @@ function showContentTask(a) {
             console.log(listTasks[a-1][j]);
             $('.contentTask').css("display","block");
             $('.contentTask').append(`    <li id="list${parseInt(a-1)+1}Task${parseInt(j)+1}">
-             <div class="collapsible-header" style="background-color: #a1887f"><img class="brand-logo responsive-img" src="logo.png" height="30" width="30">&nbsp; &nbsp; ${listTasks[a-1][j].task}
+             <div class="collapsible-header" style="background-color: #a1887f"><img class="brand-logo responsive-img" src="logo2.png" height="30" width="30">&nbsp; &nbsp; ${listTasks[a-1][j].task}
              <div style="position: absolute; right: 10px; cursor: pointer" id="deleteList${parseInt(a-1)+1}Task${parseInt(j)+1}"><i class="fa fa-times"></i></div></div>
              <div class="collapsible-body" style="background-color: white"><span><b>Date</b> : ${listTasks[a-1][j].date}</span><span style="float: right"><b>Time:</b> ${listTasks[a-1][j].time}</span></div>
             </li>
