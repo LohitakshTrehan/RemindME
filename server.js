@@ -131,7 +131,7 @@ app.post('/forgot', function(req, res, next) {
         service: "gmail",
         auth: {
           user: "remindmecommunity@gmail.com",
-          pass: "nodesofiiit"
+          pass: process.env.PASS
         }
       });
       var mailOptions = {
@@ -214,7 +214,7 @@ app.post('/reset/:token', function(req, res) {
         service: "gmail",
         auth: {
           user: "remindmecommunity@gmail.com",
-          pass: "nodesofiiit"
+          pass: process.env.PASS
         }
       });;
       var mailOptions = {
@@ -343,7 +343,7 @@ var smtpTransport = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: "remindmecommunity@gmail.com",
-        pass: "nodesofiiit"
+        pass: process.env.PASS
     }
 });
 

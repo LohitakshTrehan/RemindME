@@ -6,3 +6,6 @@
  +Lohitaksh Trehan -  https://github.com/LohitakshTrehan <br>
  +Sagar -  https://github.com/Sagarcodes <br>
  +Sourabh Gupta -  https://github.com/scoobywwe
+ 
+ Feel free to contribute by improving UI<br>
+ for example a date picker, more in flow type ui etc...
