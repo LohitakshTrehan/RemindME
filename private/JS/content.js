@@ -103,7 +103,7 @@ $(function () {
     //EXTRACTING DATABASE TO GET INFORMATION ABOUT USER LOGGED IN.
     $.get('/datainfo',function (data) {
         console.log(data);
-        $('.usernameSideNav').html(`${data[0].firstname} ${data[0].lastname}`);
+        $('.usernameSideNav').html(`${data[0].fullname}`);
         $('.emailSideNav').html(`${data[0].email}`)
     })
 });

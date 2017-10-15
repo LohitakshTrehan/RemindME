@@ -6,28 +6,35 @@ const bp = require('body-parser');
 const passport = require('./passport.js');
 const register = require('./routes/register.js');
 const flash = require('connect-flash')
-const db = require('./userdb').users;
-const dbData = require('./userdb').userData;
+const users = require('./userdb').users;
 const app = express();
-const nodeMailer = require('nodemailer');
+const async = require('async');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const dbData = require('./userdb').userData;
+
+
 app.use(cp('somerandomcharactersthatnooneknowslikechimichonga'));
 app.use(session({
     secret: 'somerandomcharactersthatnooneknowslikechimichonga',
     resave: false,
     saveUnitialized: true
 }));
-app.use(flash());
-var timerIdListTask = [];  //ASSIGNMENT OF NEW ARRAY FOR STORING TIMER ID's
+
 app.use(bp.urlencoded({extended: true}));
 app.use(bp.json());
-
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(flash());
+var timerIdListTask = [];  //ASSIGNMENT OF NEW ARRAY FOR STORING TIMER ID's
 app.use((req,res,next)=>{
     console.log(req.user);
     next();
 });
+
+/*----------------authentication--------------------*/
 
 app.use('/register',register);
 
@@ -38,34 +45,210 @@ function checkLoggedIn(req,res,next){
     }
     else{
         res.status(404).send('unauthorised');
+        //res.redirect('/')
     }
 }
+
+app.get('/',function(req,res,next){
+    if(req.user){
+        res.redirect('/private')
+    }
+    else{
+        next();
+    }   
+})
 
 app.use('/',express.static(path.join(__dirname,"public")))
 
 app.use('/private',checkLoggedIn,express.static(path.join(__dirname,'private')))
 
+// app.post('/login',passport.authenticate('local',{
+//  failureRedirect: '/',
+//  successRedirect: '/private',
+//  failureFlash: true
+// }))
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.send({message:req.flash('loginMessage')}); }
+    req.login(user, function(err) {
+      if (err) { return next(err); }
+      return res.send({redirect:"/private"});
+    });
+  })(req, res, next);
+});
 
-app.post('/login',passport.authenticate('local',{
-    failureRedirect: '/',
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile','email'] }));
+
+app.get('/auth/google/callback',passport.authenticate('google', { failureRedirect: '/',
     successRedirect: '/private',
-    failureFlash: "couldn't log in"
-}))
+    failureFlash: true }),
+);
+
 app.get('/logout',function(req,res){
     req.logout();
     res.redirect('/')
 })
 
 
+/*-----------------------------forgot password code-------------------------*/
+
+app.use('/forgot',express.static(path.join(__dirname,"public/forgotPassword.html")))
+
+app.post('/forgot', function(req, res, next) {
+  async.waterfall([
+    function(done) {
+      crypto.randomBytes(20, function(err, buf) {
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done) {
+
+        users.findOne({
+            where:{
+                email:req.body.email
+            }
+        }).then(function(user){
+            if(!user){
+                req.flash('error', 'No account with that email address exists.');
+                return res.send({message:req.flash('error')});
+            }
+
+            user.resetPasswordToken = token;
+            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+            //console.log("-------Forgot password post route.user found-------" + user.resetPasswordToken)
+            user.save().then(function(){
+                done(null, token, user);
+            })
+        }).catch(function(err){
+            throw err;
+        })
+    },
+    function(token, user, done) {
+      var smtpTransport = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "remindmecommunity@gmail.com",
+          pass: "nodesofiiit"
+        }
+      });
+      var mailOptions = {
+        to: user.email,
+        from: 'remindmecommunity@gmail.com',
+        subject: 'Reminde Me Password Reset',
+        text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+      };
+      smtpTransport.sendMail(mailOptions, function(err) {
+        req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+        done(err, 'done');
+      });
+    }
+  ], function(err) {
+        if (err) throw err;
+        res.send({message:req.flash('info')})
+  });
+});
+
+app.use('/reset/:token',express.static(path.join(__dirname,"public/resetPassword")))
+app.get('/reset/:token', function(req, res) {
+    console.log("-------reset/:token post route.Before user-------" + req.params.token)
+    users.findOne({
+        where:{
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        }
+    }).then(function(user){
+        if (!user) {
+            req.flash('error', 'Password reset token is invalid or has expired.');
+            res.redirect('/forgot');
+            //return res.send({redirect:'/forgot',message:req.flash('error')})
+        }
+        console.log("-------reset/:token get route.user found-------" + user.resetPasswordToken)
+        res.redirect('/reset/'+req.params.token);
+    })
+});
+
+app.post('/reset/:token', function(req, res) {
+  console.log("----------RESET POST ROUTE----------" + req.params.token)
+  async.waterfall([
+    function(done){
+
+        users.findOne({
+            where:{
+                resetPasswordToken: req.params.token,
+                resetPasswordExpires: { $gt: Date.now() }
+            }
+        }).then(function(user){
+            if (!user) {
+                req.flash('error', 'Password reset token is invalid or has expired.');
+                //console.log("-------reset/:token post route.Before user-------" + user)
+                return res.send({message:req.flash('error')});
+            }
+            console.log("----------user found---------- " + user)
+
+            bcrypt.hash(req.body.password, saltRounds).then(function(hash) {
+                //Store hash in password DB.
+                user.passwordhash = hash;
+                user.resetPasswordToken = null;
+                user.resetPasswordExpires = null;
+                console.log("----------user password is updated----------")
+                user.save().then(function(){
+                    req.login(user, function(err) {
+                        if (err) { return next(err); }
+                        return res.send({redirect:"/private"});
+                    });
+                })
+                
+            })
+        }).catch(function(err){
+            done(err);
+        })
+    },
+    function(user, done) {
+      var smtpTransport = nodemailer.createTransport('SMTP', {
+        service: "gmail",
+        auth: {
+          user: "remindmecommunity@gmail.com",
+          pass: "nodesofiiit"
+        }
+      });;
+      var mailOptions = {
+        to: user.email,
+        from: 'remindmecommunity@gmail.com',
+        subject: 'Your password has been changed',
+        text: 'Hello,\n\n' +
+          'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+      };
+      smtpTransport.sendMail(mailOptions, function(err) {
+        req.flash('success', 'Success! Your password has been changed.');
+        done(err);
+      });
+    }
+  ], function(err) {
+        if(err){
+            throw err;
+        }
+  });
+});
+
+
+/*---------------forgot password code ends---------------------*/
+
 app.listen(3000,function(){
     console.log("magic happens on port 3000");
 })
+
 
 // CODE FOR MANIPULATING VARIOUS DATA AND DATA BASE IN CLIENTJS.
 
 app.get('/datainfo',function(req,res){
 
-    db.findAll({
+    users.findAll({
         where : {
             id : req.user.id
         }
@@ -156,7 +339,7 @@ app.get('/retrieveData',function(req,res){
 })
 
 //Sourabh For mailing data to User.
-var smtpTransport = nodeMailer.createTransport({
+var smtpTransport = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: "remindmecommunity@gmail.com",
@@ -167,7 +350,7 @@ var smtpTransport = nodeMailer.createTransport({
 
 app.post('/send',function(req,res) {
     var emailUser;
-    db.findAll({
+    users.findAll({
         where: {
             id: req.user.id
         }
@@ -240,7 +423,7 @@ app.post('/send',function(req,res) {
                         }).then(function(){
                             /////////////////////////////////////////////////////////////////////////////////////////////
                                 var x_pending,y_done;
-                                db.findOne({
+                                users.findOne({
                                     where: userdbId = req.user.id
                                 }).then(function(data){
                                     if(data != null) {
@@ -251,7 +434,7 @@ app.post('/send',function(req,res) {
                                         x_pending--;
                                     }
                                 }).then(function (value) {
-                                    db.findOne({
+                                    users.findOne({
                                         where: userdbId = req.user.id
                                     }).then(function(data){
                                         data.update({
@@ -301,7 +484,7 @@ app.post('/send2',function(req,res) {
     listId = parseInt(arr[0]);
     taskId = parseInt(arr[1]);
     var emailUser;
-    db.findAll({
+    users.findAll({
         where: {
             id: req.user.id
         }
@@ -384,7 +567,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                         userListTaskCounter : taskCounter
                     }).then(function () {
                             var x_pending,y_done;
-                            db.findOne({
+                            users.findOne({
                                 where: userdbId = id
                             }).then(function(data){
                                 if(data != null) {
@@ -395,7 +578,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                                     x_pending--;
                                 }
                             }).then(function (value) {
-                                db.findOne({
+                                users.findOne({
                                     where: userdbId = id
                                 }).then(function(data){
                                     data.update({
@@ -415,7 +598,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
     },R_Time);
 }
 app.get('/retrievePieChart',function (req,res) {
-    db.findOne({
+    users.findOne({
         where: userdbId = req.user.id
     }).then(function(data){
         if(data != null) {
@@ -427,7 +610,7 @@ app.get('/retrievePieChart',function (req,res) {
     })
 })
 app.post('/updatePieChart',function (req,res) {
-    db.findOne({
+    users.findOne({
         where: userdbId = req.user.id
     }).then(function(data){
         data.update({
@@ -439,7 +622,7 @@ app.post('/updatePieChart',function (req,res) {
     })
 })
 app.get('/numOfUsers',function (req, res) {
-    db.count().then( function (data){
+    users.count().then( function (data){
         if(data>=0)
             res.status(200).send(data.toString());
     }).catch(function (err) {

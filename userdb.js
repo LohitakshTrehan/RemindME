@@ -13,16 +13,18 @@ const db = new Sequelize({
 const users = db.define('userdb',{
     id:{
         type:Sequelize.DataTypes.INTEGER,
-        autoIncrement:true,
-        primaryKey : true
+        primaryKey:true,
+        autoIncrement:true
     },
-    firstname:{type:Sequelize.DataTypes.STRING , allowNull: false},
-    lastname:{type:Sequelize.DataTypes.STRING , allowNull: false},
-    username:{type:Sequelize.DataTypes.STRING , unique: true , allowNull: false},
-    email:{type:Sequelize.DataTypes.STRING , unique: true , allowNull: false},
-    passwordhash:{type:Sequelize.DataTypes.STRING , allowNull: false},
-    sex:Sequelize.DataTypes.STRING,
-    dob:{type:Sequelize.DataTypes.DATEONLY ,allowNull: false},
+    fullname:{type:Sequelize.DataTypes.STRING , allowNull: false},
+    email:{type:Sequelize.DataTypes.STRING , unique: true , allowNull: false}, 
+    passwordhash:{type:Sequelize.DataTypes.STRING},
+    dob:{type:Sequelize.DataTypes.DATEONLY},
+    token:{type:Sequelize.DataTypes.STRING},
+    refreshToken:{type:Sequelize.DataTypes.STRING},
+    googleId:{type:Sequelize.DataTypes.STRING},
+    resetPasswordToken:{type:Sequelize.DataTypes.STRING},
+    resetPasswordExpires:{type:Sequelize.DataTypes.DATE},
     TaskDoneCounter:{type:Sequelize.DataTypes.INTEGER, defaultValue: 0},
     TaskNotDoneCounter:{type:Sequelize.DataTypes.INTEGER, defaultValue: 0}
 },{

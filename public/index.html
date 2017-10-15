@@ -54,8 +54,8 @@
 
                     <h2 class="ui dividing header">Sign In</h2>
                     <div class="field" style="padding: 1%">
-                        <label><h3>UserName</h3></label>
-                        <input type="text" name="username" placeholder="Your User Id">
+                        <label><h3>Email</h3></label>
+                        <input type="text" name="email" placeholder="enter your registered email">
                     </div>
 
                     <div class="field" style="padding: 1%">
@@ -69,11 +69,15 @@
                     </div>
 
                     <div class="field" style="padding-top: 7%">
-                        <a href="#"> Forgot password?</a>
+                        <a href="/forgot"> Forgot password?</a>
                     </div>
 
                     <div class="field" style="padding-top: 1%">
                         <a id="signup" href="#"> New User? &nbsp;Signup</a>
+                    </div>
+                    <p>----------OR----------</p>
+                    <div class="field" style="padding-top: 1%">
+                        <a id="googlesignin" href="/auth/google"><img src="signinusinggoogle.png" height="40" width="200px"></a>
                     </div>
 
                 </form>
@@ -81,22 +85,10 @@
 
             <div id="second" style="display: none">
                 <form id="signupform" class="ui form" method="post" action="/register" style="padding: 8%">
-
                     <h3 class="ui dividing header">Sign Up</h3>
                     <div class="field" style="padding: 1%">
                         <label>Name</label>
-                        <div class="two fields">
-                            <div class="field">
-                                <input type="text" name="firstname" placeholder="First Name">
-                            </div>
-                            <div class="field">
-                                <input type="text" name="lastname" placeholder="Last Name">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field" style="padding: 1%">
-                        <label>Username</label>
-                        <input type="text" name="username" placeholder="Enter Unique username">
+                        <input type="text" name="fullname" placeholder="Full Name">
                     </div>
                     <div class="field">
                         <label>Email Address</label>
@@ -109,13 +101,6 @@
                     <div class="field" style="padding: 1%">
                         <label>Confirm Password</label>
                         <input type="password" name="confirmpassword" placeholder="Re-Enter above Password">
-                    </div>
-                    <div class="field" style="padding: 1%">
-                        <label>Sex</label>
-                         <select name="Sex">
-                              <option value="male">Male</option>
-                              <option value="female">Female</option>
-                        </select> 
                     </div>
                     <div class="field" style="padding: 1%">
                         <label>dob</label>
