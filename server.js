@@ -216,7 +216,7 @@ app.post('/reset/:token', function(req, res) {
           user: "remindmecommunity@gmail.com",
           pass: process.env.PASS
         }
-      });;
+      });
       var mailOptions = {
         to: user.email,
         from: 'remindmecommunity@gmail.com',
@@ -424,7 +424,9 @@ app.post('/send',function(req,res) {
                             /////////////////////////////////////////////////////////////////////////////////////////////
                                 var x_pending,y_done;
                                 users.findOne({
-                                    where: userdbId = req.user.id
+                                    where : {
+                                        userdbId : req.user.id
+                                    }
                                 }).then(function(data){
                                     if(data != null) {
                                         console.log(data);
@@ -435,7 +437,9 @@ app.post('/send',function(req,res) {
                                     }
                                 }).then(function (value) {
                                     users.findOne({
-                                        where: userdbId = req.user.id
+                                        where : {
+                                            userdbId : req.user.id
+                                        }
                                     }).then(function(data){
                                         data.update({
                                             TaskDoneCounter: y_done,
@@ -568,7 +572,9 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                     }).then(function () {
                             var x_pending,y_done;
                             users.findOne({
-                                where: userdbId = id
+                                where : {
+                                    userdbId : id
+                                }
                             }).then(function(data){
                                 if(data != null) {
                                     console.log(data);
@@ -579,7 +585,9 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                                 }
                             }).then(function (value) {
                                 users.findOne({
-                                    where: userdbId = id
+                                    where : {
+                                        userdbId : id
+                                    }
                                 }).then(function(data){
                                     data.update({
                                         TaskDoneCounter: y_done,
@@ -599,7 +607,9 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
 }
 app.get('/retrievePieChart',function (req,res) {
     users.findOne({
-        where: userdbId = req.user.id
+        where : {
+            userdbId : req.user.id
+        }
     }).then(function(data){
         if(data != null) {
             console.log(data);
@@ -611,7 +621,9 @@ app.get('/retrievePieChart',function (req,res) {
 })
 app.post('/updatePieChart',function (req,res) {
     users.findOne({
-        where: userdbId = req.user.id
+        where : {
+            userdbId : req.user.id
+        }
     }).then(function(data){
         data.update({
             TaskDoneCounter: req.body.done_tasks,
