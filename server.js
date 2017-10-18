@@ -367,6 +367,11 @@ app.post('/send',function(req,res) {
             timerIdListTask[req.user.id][listId] = [];
 
         timerIdListTask[req.user.id][listId][taskId] = setTimeout(function () {
+            //
+            arr = req.body.id.split('T');
+            listId = parseInt((arr[0]));
+            taskId = parseInt((arr[1]));
+            //
             var mailOptions = {
                 from: 'remindmecommunity@gmail.com',
                 to: emailUser,
@@ -502,6 +507,11 @@ app.post('/send2',function(req,res) {
             timerIdListTask[req.user.id][listId] = [];
 
         timerIdListTask[req.user.id][listId][taskId] = setInterval(function () {
+            //
+            arr = req.body.id.split('T');
+            listId = parseInt((arr[0]));
+            taskId = parseInt((arr[1]));
+            //
             if (R_Time - 864000000 < 2147482647) {
                 R_Time = R_Time - 864000000
                 sendEmailForLong(req.body.taskName, R_Time, listId, taskId, req.user.id, req.body.id,emailUser)
