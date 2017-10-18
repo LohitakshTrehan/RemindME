@@ -425,7 +425,7 @@ app.post('/send',function(req,res) {
                                 var x_pending,y_done;
                                 users.findOne({
                                     where : {
-                                        userdbId : req.user.id
+                                        id : req.user.id
                                     }
                                 }).then(function(data){
                                     if(data != null) {
@@ -438,7 +438,7 @@ app.post('/send',function(req,res) {
                                 }).then(function (value) {
                                     users.findOne({
                                         where : {
-                                            userdbId : req.user.id
+                                            id : req.user.id
                                         }
                                     }).then(function(data){
                                         data.update({
@@ -447,7 +447,7 @@ app.post('/send',function(req,res) {
                                         })
                                     })
                                 }).catch(function(err){
-                                    console.log(err);
+                                    console.log("LOHIT1"+err);
                                 })
                             /////////////////////////////////////////////////////////////////////////////////////////////
                             res.send({success:true})
@@ -573,7 +573,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                             var x_pending,y_done;
                             users.findOne({
                                 where : {
-                                    userdbId : id
+                                    id : id
                                 }
                             }).then(function(data){
                                 if(data != null) {
@@ -586,7 +586,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                             }).then(function (value) {
                                 users.findOne({
                                     where : {
-                                        userdbId : id
+                                        id : id
                                     }
                                 }).then(function(data){
                                     data.update({
@@ -595,7 +595,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
                                     })
                                 })
                             }).catch(function(err){
-                                console.log(err);
+                                console.log("LOHIT2"+err);
                             })
                     })//////use .then()  use id instead req.id here/////////////////////////////////////////////////////
                 }
@@ -608,7 +608,7 @@ function sendEmailForLong(taskName,R_Time,listId,taskId,id,fullTaskId,emailUser)
 app.get('/retrievePieChart',function (req,res) {
     users.findOne({
         where : {
-            userdbId : req.user.id
+            id : req.user.id
         }
     }).then(function(data){
         if(data != null) {
@@ -616,13 +616,13 @@ app.get('/retrievePieChart',function (req,res) {
             res.send(data);
         }
     }).catch(function(err){
-        console.log(err);
+        console.log("LOHIT3"+err);
     })
 })
 app.post('/updatePieChart',function (req,res) {
     users.findOne({
         where : {
-            userdbId : req.user.id
+            id : req.user.id
         }
     }).then(function(data){
         data.update({
@@ -631,6 +631,8 @@ app.post('/updatePieChart',function (req,res) {
         }).then(function(){
             res.send({success: true});
         })
+    }).catch(function (err) {
+        console.log("LOHIT4"+err);
     })
 })
 app.get('/numOfUsers',function (req, res) {
