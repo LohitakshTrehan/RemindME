@@ -68,7 +68,7 @@ $(function () {
             });
         }
     });
-    
+
     $('#signinform').on('submit',function (e) {
         e.preventDefault();
         var eroo='';
@@ -89,7 +89,7 @@ $(function () {
     });
 
     $('#github').click(function () {
-        window.location.href="https://github.com/NodeNITKkr/PingME";
+        window.location.href="https://github.com/LohitakshTrehan/RemindME";
     })
 
 });
